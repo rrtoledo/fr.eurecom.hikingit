@@ -12,7 +12,6 @@ public class DisplayActivity extends Activity {
 		setContentView(R.layout.activity_display);
 	}
 	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
