@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hiking It</string>
+    <string name="app_name">GoogleMaps</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="b_addmark">Hello world!</string>
+    <string name="no_tracks">Currently there are no tracks maintained</string>
+    <string name="menu_insert">Add Item</string>
+    <string name="menu_delete">Delete Track</string>
+    <string name="menu_edit">Edit Track</string>
+    <string name="track_summary">Summary</string>
+    <string name="track_description">Delete Track</string>
+    <string name="track_edit_title">Title</string>
+    <string name="track_edit_summary">Summary</string>
+    <string name="track_edit_confirm">Confirm</string>
+    <string name="tDifficulty">Difficulty :</string>
+    <string name="tNbCoords">Coord. number :</string>
+    <string name="tDuration">Duration :</string>
+    <string name="track_edit_yourcoords">Your coordinates :</string>
+    <string name="tPosition">Vecteur :</string>
 
 </resources>
