@@ -17,6 +17,8 @@ public class TrackTable {
 	public static final String COLUMN_STARTY = "startY";
 	public static final String COLUMN_COORDS = "coords";
 	public static final String COLUMN_FLAGS = "flags";
+	public static final String COLUMN_SCORE = "score";
+	public static final String COLUMN_PIC = "pics";
 
 
 	// Database creation SQL statement
@@ -26,7 +28,8 @@ public class TrackTable {
 			+ " text not null, " + COLUMN_SUMMARY + " text not null, " 
 			+ COLUMN_NBCOORDS + " text not null, " + COLUMN_DURATION + " text not null, "
 			+ COLUMN_STARTX + "double not null, " + COLUMN_STARTY + "double not null, " 
-			+ COLUMN_COORDS + " text not null, " + COLUMN_FLAGS + "text not null);";
+			+ COLUMN_COORDS + " text not null, " + COLUMN_FLAGS + "text not null"
+			+ COLUMN_SCORE + " text not null, " + COLUMN_PIC + "text not null);";
 
 	public static void onCreate(SQLiteDatabase database) {
 		database.execSQL(DATABASE_CREATE);

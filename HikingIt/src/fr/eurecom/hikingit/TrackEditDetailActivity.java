@@ -79,7 +79,8 @@ public class TrackEditDetailActivity extends Activity {
     		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
     		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
     		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-    		TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS };
+    		TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
+    		TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC};
     Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
     if (cursor != null) {
       cursor.moveToFirst();
