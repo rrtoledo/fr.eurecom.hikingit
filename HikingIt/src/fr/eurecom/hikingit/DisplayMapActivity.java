@@ -44,24 +44,26 @@ public class DisplayMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
 		OnMarkerClickListener {
 
-	static final LatLng Location1 = new LatLng(43.60191559, 7.100901604);
-	static final LatLng Location2 = new LatLng(43.60331405, 7.101652622);
-	
 	private double longitude;
-    private double latitude;
-    
-    private double marginRefresh;
+	private double latitude;
+
+	private double marginRefresh;
 	private double margin;
+
+	// blue, purple, green, orange, red - first marker - second thread
+	int[] colors = { 0xFF0099CC, 0xFF33B5E5, 0xFF9933CC, 0xFFAA66CC,
+			0xFF669900, 0xFF99CC00, 0xFFFF8800, 0xFFBB33,
+			0xFFCC0000,	0xFFFF4444 };
 
 	GoogleMap googleMap;
 	TextView tvLocInfo;
 	boolean markerClicked = false;
 	Polyline polyline;
 	PolylineOptions rectOptions;
-	
+
 	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
 	Vector<LatLng> vectorLoc = new Vector<LatLng>();
-	
+
 	boolean ButtonEnableMarkClicked = false;
 
 	@Override
@@ -112,6 +114,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 			longitude = location.getLongitude();
 			fillData();
 
+			addMarkers();
+
 			googleMap.setOnMapClickListener(this);
 			googleMap.setOnMapLongClickListener(this);
 			googleMap.setOnMarkerClickListener(this);
@@ -120,8 +124,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 				public void onLocationChanged(Location location) {
 					// redraw the marker when get location update.
-					if(location.getLatitude()> (latitude + marginRefresh) || location.getLongitude()> (longitude + marginRefresh))
-					{
+					if (location.getLatitude() > (latitude + marginRefresh)
+							|| location.getLongitude() > (longitude + marginRefresh)) {
 						latitude = location.getLatitude();
 						longitude = location.getLongitude();
 						fillData();
@@ -153,7 +157,6 @@ public class DisplayMapActivity extends FragmentActivity implements
 			if (location != null) {
 				// PLACE THE INITIAL MARKER
 				drawMarker(location);
-				drawOtherMarkers();
 			}
 
 			locationManager.requestLocationUpdates(provider, 3000, 0,
@@ -223,46 +226,11 @@ public class DisplayMapActivity extends FragmentActivity implements
 						"Lat:" + location.getLatitude() + "Lng:"
 								+ location.getLongitude())
 				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
 				.title("ME"));
 	}
 
 	private void drawOtherMarkers() {
-
-		googleMap.addMarker(new MarkerOptions()
-				.position(Location1)
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-				.title("1"));
-		googleMap.addMarker(new MarkerOptions()
-				.position(Location2)
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-				.title("2"));
-
-		PolylineOptions line = new PolylineOptions().add(Location1, Location2)
-				.width(2).color(Color.RED);
-
-		googleMap.addPolyline(line);
-
-		if (vectorLoc.size() != 0) {
-			for (int i = 0; i < vectorLoc.size(); i++) {
-				String s = "num:" + i;
-				googleMap
-						.addMarker(new MarkerOptions()
-								.position(vectorLoc.get(i))
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-								.title(s));
-				if (i != vectorLoc.size() - 1) {
-					PolylineOptions line2 = new PolylineOptions()
-							.add(vectorLoc.get(i), vectorLoc.get(i + 1))
-							.width(3).color(Color.YELLOW);
-					googleMap.addPolyline(line2);
-				}
-			}
-
-		}
 	}
 
 	@Override
@@ -319,54 +287,89 @@ public class DisplayMapActivity extends FragmentActivity implements
 	}
 
 	private void fillData() {
-	    String[] projection = { TrackTable.COLUMN_DIFFICULTY,
-	    		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-	    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
-	    		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-	    		TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
-	    		TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC};
-	    
-        String selection = "flags=? AND startX<? AND startY<?";
-        
-        double limitX= latitude + margin;
-        String lgtd = String.valueOf(limitX);
-        
-        double limitY= longitude + margin;
-        String lttd = String.valueOf(limitY);    
-        
-        String[] selectionArgs = {"1",lttd,lgtd};
-        String order = "";
-	    Cursor cursor = getContentResolver().query(TrackContentProvider.CONTENT_URI,
-	    		projection, selection, selectionArgs, order);
-	    if (cursor != null) {
-	      cursor.moveToFirst();
-	      int index=0;
-	      int index2=0;
-	      for (int i=cursor.getPosition(); i<=cursor.getCount(); i++)
-	      {
-	    	  int NbCoords = Integer.valueOf(cursor.getString(cursor
-	   	           .getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS)));
-	    	  
-	    	  String Coords = cursor.getString(cursor
-		   	           .getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
-	    	  
-	    	  Vector<LatLng> vect = new Vector<LatLng>();
-	    	  listVect.add(vect);
-	    	  
-	    	  for (int j=0; j<=NbCoords; j++)
-	    	  {
-	    		  index2 = Coords.indexOf(";", index);
-	    		  double lat = Double.valueOf(Coords.substring(index+1, index2-1));
-	    		  index = Coords.indexOf("(", index2);
-	    		  double lgt = Double.valueOf(Coords.substring(index2+1, index-2));
-	    		  LatLng latlong = new LatLng(lat,lgt);
-	    		  listVect.get(i).add(latlong);  		  
-	    	  }
-	    	  cursor.moveToNext();
-	      }
+		String[] projection = { TrackTable.COLUMN_DIFFICULTY,
+				TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+				TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
+				TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
+				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
+				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC };
 
-	      // always close the cursor
-	      cursor.close();
-	    }
-	  }
+		String selection = "flags=? AND startX<? AND startY<?";
+
+		double limitX = latitude + margin;
+		String lgtd = String.valueOf(limitX);
+
+		double limitY = longitude + margin;
+		String lttd = String.valueOf(limitY);
+
+		String[] selectionArgs = { "1", lttd, lgtd };
+		String order = "";
+		Cursor cursor = getContentResolver().query(
+				TrackContentProvider.CONTENT_URI, projection, selection,
+				selectionArgs, order);
+		if (cursor != null) {
+			cursor.moveToFirst();
+			int index = 0;
+			int index2 = 0;
+			for (int i = cursor.getPosition(); i <= cursor.getCount(); i++) {
+				int NbCoords = Integer.valueOf(cursor.getString(cursor
+						.getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS)));
+
+				String Coords = cursor.getString(cursor
+						.getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
+
+				Vector<LatLng> vect = new Vector<LatLng>();
+				listVect.add(vect);
+
+				for (int j = 0; j <= NbCoords; j++) {
+					index2 = Coords.indexOf(";", index);
+					double lat = Double.valueOf(Coords.substring(index + 1,
+							index2 - 1));
+					index = Coords.indexOf("(", index2);
+					double lgt = Double.valueOf(Coords.substring(index2 + 1,
+							index - 2));
+					LatLng latlong = new LatLng(lat, lgt);
+					listVect.get(i).add(latlong);
+				}
+				cursor.moveToNext();
+			}
+
+			// always close the cursor
+			cursor.close();
+		}
+	}
+
+	//set an idea on the marker
+	//onclick marker => intent
+	public void addMarkers() {
+		for (int m = 0; m <= listVect.size(); m++) {
+			LatLng point = listVect.get(m).get(1);
+			googleMap.addMarker(new MarkerOptions().position(point).title(
+					point.toString()));
+			drawLine(m);
+		}
+	}
+
+	public void drawLine(int a) {
+
+		if (listVect.get(a).size() < 2)
+			return;
+		else {
+			LatLng Location1 = listVect.get(a).get(0);
+			LatLng Location2 = listVect.get(a).get(1);
+			
+			int colorThread = colors[2*a % colors.length];
+
+			for (int m = 0; m < listVect.get(a).size()-1; m++) {
+				PolylineOptions line = new PolylineOptions()
+						.add(Location1, Location2).width(2).color(colorThread);
+
+				googleMap.addPolyline(line);
+				
+				Location1 = listVect.get(a).get(m);
+				Location2 = listVect.get(a).get(m+1);
+			}
+		}
+	}
+	
 }
