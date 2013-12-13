@@ -37,6 +37,7 @@ public class DisplayAllActivity extends ListActivity implements
 	private static final int EDIT_ID = DELETE_ID + 1;
 	// private Cursor cursor;
 	private SimpleCursorAdapter adapter;
+
 	// private location
 
 	/** Called when the activity is first created. */

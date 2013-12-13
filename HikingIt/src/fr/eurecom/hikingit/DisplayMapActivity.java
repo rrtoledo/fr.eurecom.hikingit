@@ -1,13 +1,20 @@
 package fr.eurecom.hikingit;
 
+import java.lang.reflect.Array;
 import java.util.Vector;
 
 import android.app.Dialog;
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -30,21 +37,31 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
+import fr.eurecom.hikingit.database.TrackTable;
+
 public class DisplayMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
 		OnMarkerClickListener {
-	
-	//vectors : 1
 
 	static final LatLng Location1 = new LatLng(43.60191559, 7.100901604);
 	static final LatLng Location2 = new LatLng(43.60331405, 7.101652622);
+	
+	private double longitude;
+    private double latitude;
+    
+    private double marginRefresh;
+	private double margin;
 
 	GoogleMap googleMap;
 	TextView tvLocInfo;
 	boolean markerClicked = false;
 	Polyline polyline;
 	PolylineOptions rectOptions;
+	
+	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
 	Vector<LatLng> vectorLoc = new Vector<LatLng>();
+	
 	boolean ButtonEnableMarkClicked = false;
 
 	@Override
@@ -91,6 +108,9 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 			// Getting Current Location
 			Location location = locationManager.getLastKnownLocation(provider);
+			latitude = location.getLatitude();
+			longitude = location.getLongitude();
+			fillData();
 
 			googleMap.setOnMapClickListener(this);
 			googleMap.setOnMapLongClickListener(this);
@@ -100,6 +120,12 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 				public void onLocationChanged(Location location) {
 					// redraw the marker when get location update.
+					if(location.getLatitude()> (latitude + marginRefresh) || location.getLongitude()> (longitude + marginRefresh))
+					{
+						latitude = location.getLatitude();
+						longitude = location.getLongitude();
+						fillData();
+					}
 					drawMarker(location);
 					drawOtherMarkers();
 				}
@@ -292,4 +318,55 @@ public class DisplayMapActivity extends FragmentActivity implements
 		return false;
 	}
 
+	private void fillData() {
+	    String[] projection = { TrackTable.COLUMN_DIFFICULTY,
+	    		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+	    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
+	    		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
+	    		TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
+	    		TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC};
+	    
+        String selection = "flags=? AND startX<? AND startY<?";
+        
+        double limitX= latitude + margin;
+        String lgtd = String.valueOf(limitX);
+        
+        double limitY= longitude + margin;
+        String lttd = String.valueOf(limitY);    
+        
+        String[] selectionArgs = {"1",lttd,lgtd};
+        String order = "";
+	    Cursor cursor = getContentResolver().query(TrackContentProvider.CONTENT_URI,
+	    		projection, selection, selectionArgs, order);
+	    if (cursor != null) {
+	      cursor.moveToFirst();
+	      int index=0;
+	      int index2=0;
+	      for (int i=cursor.getPosition(); i<=cursor.getCount(); i++)
+	      {
+	    	  int NbCoords = Integer.valueOf(cursor.getString(cursor
+	   	           .getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS)));
+	    	  
+	    	  String Coords = cursor.getString(cursor
+		   	           .getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
+	    	  
+	    	  Vector<LatLng> vect = new Vector<LatLng>();
+	    	  listVect.add(vect);
+	    	  
+	    	  for (int j=0; j<=NbCoords; j++)
+	    	  {
+	    		  index2 = Coords.indexOf(";", index);
+	    		  double lat = Double.valueOf(Coords.substring(index+1, index2-1));
+	    		  index = Coords.indexOf("(", index2);
+	    		  double lgt = Double.valueOf(Coords.substring(index2+1, index-2));
+	    		  LatLng latlong = new LatLng(lat,lgt);
+	    		  listVect.get(i).add(latlong);  		  
+	    	  }
+	    	  cursor.moveToNext();
+	      }
+
+	      // always close the cursor
+	      cursor.close();
+	    }
+	  }
 }
