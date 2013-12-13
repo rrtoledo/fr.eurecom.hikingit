@@ -147,6 +147,8 @@ public class TrackEditDetailActivity extends Activity {
 		String duration = mDuration.getText().toString();
 		String startX =  mPos.getText().toString();
 		String startY =  mPos.getText().toString();
+		String score = "";
+		String pics = "";
 		
 		int indexX = startX.indexOf(";");
 		if (indexX!=-1)
@@ -182,6 +184,8 @@ public class TrackEditDetailActivity extends Activity {
 		values.put(TrackTable.COLUMN_STARTY, startY);
 		values.put(TrackTable.COLUMN_COORDS, coords);
 		values.put(TrackTable.COLUMN_FLAGS, visibility);
+		values.put(TrackTable.COLUMN_SCORE, score);
+		values.put(TrackTable.COLUMN_PIC, pics);
 		
 		if (trackUri == null) {
 			// New track
