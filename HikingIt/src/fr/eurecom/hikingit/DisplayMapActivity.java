@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 public class DisplayMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
 		OnMarkerClickListener {
+	
+	//vectors
 
 	static final LatLng Location1 = new LatLng(43.60191559, 7.100901604);
 	static final LatLng Location2 = new LatLng(43.60331405, 7.101652622);
