@@ -2,6 +2,7 @@ package fr.eurecom.hikingit;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 
 public class DisplayActivity extends Activity {
@@ -12,7 +13,6 @@ public class DisplayActivity extends Activity {
 		setContentView(R.layout.activity_display);
 		//hello
 	}
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -20,5 +20,19 @@ public class DisplayActivity extends Activity {
 		getMenuInflater().inflate(R.menu.display, menu);
 		return true;
 	}
+	
+	public void textAllView(){
+		Intent i = new Intent(this, DisplayAllActivity.class);
+		startActivity(i);		
+	};
+	public void textView(){
+		Intent i = new Intent(this, SearchTrackActivity.class);
+		startActivity(i);		
+	};
+	public void mapView(){
+		Intent i = new Intent(this, DisplayMapActivity.class);
+		startActivity(i);		
+	};	
+	
 
 }

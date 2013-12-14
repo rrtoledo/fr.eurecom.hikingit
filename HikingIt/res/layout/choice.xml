@@ -14,7 +14,7 @@
         android:text="Text View" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/adDisplayAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button2"
