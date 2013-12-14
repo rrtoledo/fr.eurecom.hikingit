@@ -24,7 +24,7 @@ public class TrackContentProvider extends ContentProvider {
   private static final int TRACKS = 10;
   private static final int TRACK_ID = 20;
 
-  private static final String AUTHORITY = "eu.eurecom.hikeit.contentprovider";
+  private static final String AUTHORITY = "fr.eurecom.hikingit.contentprovider";
   private static final String BASE_PATH = "tracks";
   
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
@@ -171,7 +171,8 @@ public class TrackContentProvider extends ContentProvider {
   }
 
   private void checkColumns(String[] projection) {
-    String[] available = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+    String[] available = { TrackTable.COLUMN_ID,
+    		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
     		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
     		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
     		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,

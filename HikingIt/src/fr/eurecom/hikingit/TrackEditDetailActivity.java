@@ -66,6 +66,7 @@ public class TrackEditDetailActivity extends Activity {
 					TextUtils.isEmpty(mSummaryText.getText().toString()) ) {
 					makeToast();
 				} else {
+					saveData();
 					setResult(RESULT_OK);
 					finish();
 				}
@@ -139,8 +140,10 @@ public class TrackEditDetailActivity extends Activity {
 		super.onPause();
 		saveState();
 	}
+	
+	private void saveState(){};
 
-	private void saveState() {
+	private void saveData() {
 		String difficulty = (String) mDifficulty.getSelectedItem();
 		String nbcoords = (String) mNbCoords.getSelectedItem();
 		String title = mTitleText.getText().toString();
@@ -153,21 +156,31 @@ public class TrackEditDetailActivity extends Activity {
 		String pics = "picture_path";
 		
 		int indexX = startX.indexOf(";");
+		Toast.makeText(TrackEditDetailActivity.this, "indexX : " + indexX,
+				Toast.LENGTH_LONG).show();
 		if (indexX!=-1)
 		{
-			startX.substring(1, indexX-1);
+			startX = startX.substring(1, indexX);
 		}
-		else startX.substring(0, 1);
+		else startX = startX.substring(0, 2);
+		
+		Toast.makeText(TrackEditDetailActivity.this, "StartX : " + startX,
+				Toast.LENGTH_LONG).show();
 		
 		int indexY = startY.indexOf(")");
+		Toast.makeText(TrackEditDetailActivity.this, "indexY : " + indexY,
+				Toast.LENGTH_LONG).show();
 		if (indexY!=-1)
 		{
-			startY.substring(indexX+1, indexY-1);
+			startY = startY.substring(indexX+1, indexY);
 		}
-		else startY.substring(0, 1);
+		else startY = startY.substring(0, 2);
+		
+		Toast.makeText(TrackEditDetailActivity.this, "StartY : " + startY,
+				Toast.LENGTH_LONG).show();
 		
 		String coords = mPos.getText().toString();
-		String visibility = mVis.getText().toString();
+		String flags = mVis.getText().toString();
 
 		
 		// only save if either summary or description
@@ -186,10 +199,13 @@ public class TrackEditDetailActivity extends Activity {
 		values.put(TrackTable.COLUMN_COORDS, coords);
 		values.put(TrackTable.COLUMN_STARTX, startX);
 		values.put(TrackTable.COLUMN_STARTY, startY);
-		values.put(TrackTable.COLUMN_FLAGS, visibility);
+		values.put(TrackTable.COLUMN_FLAGS, flags);
 		values.put(TrackTable.COLUMN_SCORE, score);
 		values.put(TrackTable.COLUMN_REP, rep);
 		values.put(TrackTable.COLUMN_PIC, pics);
+
+		Toast.makeText(TrackEditDetailActivity.this,"Uri : "+ trackUri + "values "+ values , Toast.LENGTH_LONG).show();
+
 		
 		if (trackUri == null) {
 			// New track

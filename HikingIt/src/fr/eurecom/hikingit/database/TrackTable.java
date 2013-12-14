@@ -28,9 +28,9 @@ public class TrackTable {
 			+ COLUMN_TITLE + " text not null, " + COLUMN_SUMMARY + " text not null, "
 			+ COLUMN_DURATION + " text not null, " + COLUMN_DIFFICULTY + " text not null, "
 			+ COLUMN_NBCOORDS + " text not null, " + COLUMN_COORDS + " text not null, "
-			+ COLUMN_STARTX + "double not null, " + COLUMN_STARTY + "double not null, " 
-			+ COLUMN_FLAGS + "text not null, " + COLUMN_SCORE + " text not null, " 
-			+ COLUMN_REP + "text, " + COLUMN_PIC + "text);";
+			+ COLUMN_STARTX + " double not null, " + COLUMN_STARTY + " double not null, " 
+			+ COLUMN_FLAGS + " text not null, " + COLUMN_SCORE + " text not null, " 
+			+ COLUMN_REP + " text, " + COLUMN_PIC + " text);";
 
 	public static void onCreate(SQLiteDatabase database) {
 		database.execSQL(DATABASE_CREATE);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 
 public class DisplayActivity extends Activity {
 
@@ -13,23 +14,16 @@ public class DisplayActivity extends Activity {
 		setContentView(R.layout.activity_display);
 		//hello
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display, menu);
-		return true;
-	}
 	
-	public void textAllView(){
+	public void textAllView(View v){
 		Intent i = new Intent(this, DisplayAllActivity.class);
 		startActivity(i);		
 	};
-	public void textView(){
+	public void textView(View v){
 		Intent i = new Intent(this, SearchTrackActivity.class);
 		startActivity(i);		
 	};
-	public void mapView(){
+	public void mapView(View v){
 		Intent i = new Intent(this, DisplayMapActivity.class);
 		startActivity(i);		
 	};	

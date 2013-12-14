@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -52,8 +53,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 	// blue, purple, green, orange, red - first marker - second thread
 	int[] colors = { 0xFF0099CC, 0xFF33B5E5, 0xFF9933CC, 0xFFAA66CC,
-			0xFF669900, 0xFF99CC00, 0xFFFF8800, 0xFFBB33,
-			0xFFCC0000,	0xFFFF4444 };
+			0xFF669900, 0xFF99CC00, 0xFFFF8800, 0xFFBB33, 0xFFCC0000,
+			0xFFFF4444 };
 
 	GoogleMap googleMap;
 	TextView tvLocInfo;
@@ -110,58 +111,62 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 			// Getting Current Location
 			Location location = locationManager.getLastKnownLocation(provider);
-			latitude = location.getLatitude();
-			longitude = location.getLongitude();
-			fillData();
-
-			addMarkers();
-
-			googleMap.setOnMapClickListener(this);
-			googleMap.setOnMapLongClickListener(this);
-			googleMap.setOnMarkerClickListener(this);
-
-			LocationListener locationListener = new LocationListener() {
-
-				public void onLocationChanged(Location location) {
-					// redraw the marker when get location update.
-					if (location.getLatitude() > (latitude + marginRefresh)
-							|| location.getLongitude() > (longitude + marginRefresh)) {
-						latitude = location.getLatitude();
-						longitude = location.getLongitude();
-						fillData();
-					}
-					drawMarker(location);
-					drawOtherMarkers();
-				}
-
-				@Override
-				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onProviderEnabled(String provider) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onStatusChanged(String provider, int status,
-						Bundle extras) {
-					// TODO Auto-generated method stub
-
-				}
-			};
 
 			if (location != null) {
-				// PLACE THE INITIAL MARKER
+				latitude = location.getLatitude();
+				longitude = location.getLongitude();
+				fillData();
+
+				googleMap.setOnMapClickListener(this);
+				googleMap.setOnMapLongClickListener(this);
+				googleMap.setOnMarkerClickListener(this);
+
 				drawMarker(location);
+
+				LocationListener locationListener = new LocationListener() {
+
+					public void onLocationChanged(Location location) {
+						// redraw the marker when get location update.
+						if (location.getLatitude() > (latitude + marginRefresh)
+								|| location.getLongitude() > (longitude + marginRefresh)) {
+							latitude = location.getLatitude();
+							longitude = location.getLongitude();
+							fillData();
+						}
+						drawMarker(location);
+					}
+
+					@Override
+					public void onProviderDisabled(String provider) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onProviderEnabled(String provider) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onStatusChanged(String provider, int status,
+							Bundle extras) {
+						// TODO Auto-generated method stub
+
+					}
+				};
+
+				if (location != null) {
+					// PLACE THE INITIAL MARKER
+					drawMarker(location);
+				}
+
+				locationManager.requestLocationUpdates(provider, 3000, 0,
+						locationListener);
+			} else {
+				Toast.makeText(getApplicationContext(), "No location",
+						Toast.LENGTH_LONG).show();
 			}
-
-			locationManager.requestLocationUpdates(provider, 3000, 0,
-					locationListener);
-
 		}
 
 	}
@@ -287,27 +292,32 @@ public class DisplayMapActivity extends FragmentActivity implements
 	}
 
 	private void fillData() {
-	    String[] projection = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-	    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
-	    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
-	    		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-	    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_SCORE,
-	    		TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
+		String[] projection = { TrackTable.COLUMN_TITLE,
+				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
+				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
+				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
+				TrackTable.COLUMN_STARTY, TrackTable.COLUMN_FLAGS,
+				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP,
+				TrackTable.COLUMN_PIC };
 
-		String selection = "flags=? AND startX<? AND startY<?";
+		String selection = ""; //"startX < ? AND startY < ?"; //"flags = ? AND startX < ? AND startY < ?";
 
 		double limitX = latitude + margin;
 		String lgtd = String.valueOf(limitX);
+		Toast.makeText(DisplayMapActivity.this, "longitude max : " + lgtd,
+				Toast.LENGTH_LONG).show();
 
 		double limitY = longitude + margin;
 		String lttd = String.valueOf(limitY);
+		Toast.makeText(DisplayMapActivity.this, "latitude max : " + lttd,
+				Toast.LENGTH_LONG).show();
 
-		String[] selectionArgs = { "1", lttd, lgtd };
+		String[] selectionArgs = {}; //{lttd, lgtd}; //{ "1", lttd, lgtd };
 		String order = "";
 		Cursor cursor = getContentResolver().query(
 				TrackContentProvider.CONTENT_URI, projection, selection,
 				selectionArgs, order);
-		if (cursor != null) {
+		if (cursor != null && cursor.moveToFirst()) {
 			cursor.moveToFirst();
 			int index = 0;
 			int index2 = 0;
@@ -320,14 +330,22 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 				Vector<LatLng> vect = new Vector<LatLng>();
 				listVect.add(vect);
+				Toast.makeText(DisplayMapActivity.this, "nb coords " + NbCoords,
+						Toast.LENGTH_LONG).show();
+				Toast.makeText(DisplayMapActivity.this, "coords " + Coords,
+						Toast.LENGTH_LONG).show();				
 
 				for (int j = 0; j < NbCoords; j++) {
 					index2 = Coords.indexOf(";", index);
+					Toast.makeText(DisplayMapActivity.this, "index " + index,
+							Toast.LENGTH_LONG).show();
+					Toast.makeText(DisplayMapActivity.this, "index " + index,
+							Toast.LENGTH_LONG).show();
 					double lat = Double.valueOf(Coords.substring(index + 1,
-							index2 - 1));
+							index2));
 					index = Coords.indexOf("(", index2);
 					double lgt = Double.valueOf(Coords.substring(index2 + 1,
-							index - 2));
+							index - 1));
 					LatLng latlong = new LatLng(lat, lgt);
 					listVect.get(i).add(latlong);
 				}
@@ -336,11 +354,15 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 			// always close the cursor
 			cursor.close();
+			addMarkers();
+		} else {
+			Toast.makeText(DisplayMapActivity.this, "No cursor",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 
-	//set an idea on the marker
-	//onclick marker => intent
+	// set an idea on the marker
+	// onclick marker => intent
 	public void addMarkers() {
 		for (int m = 0; m <= listVect.size(); m++) {
 			LatLng point = listVect.get(m).get(1);
@@ -357,19 +379,19 @@ public class DisplayMapActivity extends FragmentActivity implements
 		else {
 			LatLng Location1 = listVect.get(a).get(0);
 			LatLng Location2 = listVect.get(a).get(1);
-			
-			int colorThread = colors[2*a % colors.length];
 
-			for (int m = 0; m < listVect.get(a).size()-1; m++) {
+			int colorThread = colors[2 * a % colors.length];
+
+			for (int m = 0; m < listVect.get(a).size() - 1; m++) {
 				PolylineOptions line = new PolylineOptions()
 						.add(Location1, Location2).width(2).color(colorThread);
 
 				googleMap.addPolyline(line);
-				
+
 				Location1 = listVect.get(a).get(m);
-				Location2 = listVect.get(a).get(m+1);
+				Location2 = listVect.get(a).get(m + 1);
 			}
 		}
 	}
-	
+
 }

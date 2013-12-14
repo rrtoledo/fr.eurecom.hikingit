@@ -10,7 +10,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="40dp"
         android:layout_marginTop="80dp"
-        android:onClick="textAllView()"
+        android:onClick="textAllView"
         android:text="Display All" />
 
     <Button
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="40dp"
-        android:onClick="textView()"
+        android:onClick="textView"
         android:text="Display" />
 
     <Button
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="40dp"
-        android:onClick="mapView()"
+        android:onClick="mapView"
         android:text="Display Map" />
 
 </LinearLayout>

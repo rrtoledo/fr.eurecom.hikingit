@@ -33,7 +33,7 @@ public class SearchTrackActivity extends ListActivity implements
 	// private location
 	private double longitude;
 	private double latitude;
-	private double margin = 2;
+	private double margin = 5;
 
 	/** Called when the activity is first created. */
 
@@ -149,7 +149,7 @@ public class SearchTrackActivity extends ListActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
-        String selection = "visibility=? AND startX<? AND startY<?";
+        String selection = "flags = ? AND startX < ? AND startY < ?";
         
         double limitX= longitude + margin;
         String lgt = String.valueOf(limitX);
