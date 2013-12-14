@@ -287,12 +287,12 @@ public class DisplayMapActivity extends FragmentActivity implements
 	}
 
 	private void fillData() {
-		String[] projection = { TrackTable.COLUMN_DIFFICULTY,
-				TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-				TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
-				TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
-				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC };
+	    String[] projection = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+	    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
+	    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
+	    		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
+	    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_SCORE,
+	    		TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
 
 		String selection = "flags=? AND startX<? AND startY<?";
 
@@ -321,7 +321,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 				Vector<LatLng> vect = new Vector<LatLng>();
 				listVect.add(vect);
 
-				for (int j = 0; j <= NbCoords; j++) {
+				for (int j = 0; j < NbCoords; j++) {
 					index2 = Coords.indexOf(";", index);
 					double lat = Double.valueOf(Coords.substring(index + 1,
 							index2 - 1));

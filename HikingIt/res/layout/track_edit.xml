@@ -54,14 +54,14 @@
             android:text="@string/tDuration" />
 
         <EditText
-            android:id="@+id/duration"
+            android:id="@+id/tdDuration"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" />
 
     </LinearLayout>
 
     <EditText
-        android:id="@+id/track_edit_summary"
+        android:id="@+id/tdSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -93,7 +93,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/scrollView1"
+        android:id="@+id/tdComments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

@@ -166,7 +166,15 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		
 		if (!vectorLoc.isEmpty())
 		{
-			String position = vectorLoc.toString();
+			String position = "";
+			int NbCoords = vectorLoc.size();
+			for (int j = 0; j < NbCoords; j++) {		
+				position += "(";
+				position += Double.toString(vectorLoc.get(j).latitude);
+				position += ";";
+				position += Double.toString(vectorLoc.get(j).longitude);
+			}
+			
 			String startX = position.substring(1, position.indexOf(";")-1);
 			String startY = position.substring(position.indexOf(";"+1), position.indexOf(")")-1);
 			String difficulty = "1";
@@ -174,20 +182,23 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			String nbcoords = coords.toString();
 			String title = "new Track";
 			String summary = "summary";
-			String duration = "1h00";
+			String duration = "60";
 			String visibility = "1";
+			String reputation = "0;0";
+			String pictures = "picture_path";
 			
 			ContentValues values = new ContentValues();
-			values.put(TrackTable.COLUMN_DIFFICULTY, difficulty);
 			values.put(TrackTable.COLUMN_TITLE, title);
 			values.put(TrackTable.COLUMN_SUMMARY, summary);
-			values.put(TrackTable.COLUMN_NBCOORDS, nbcoords);
 			values.put(TrackTable.COLUMN_DURATION, duration);
+			values.put(TrackTable.COLUMN_DIFFICULTY, difficulty);
+			values.put(TrackTable.COLUMN_NBCOORDS, nbcoords);
+			values.put(TrackTable.COLUMN_COORDS, position);
 			values.put(TrackTable.COLUMN_STARTX, startX);
 			values.put(TrackTable.COLUMN_STARTY, startY);
-			values.put(TrackTable.COLUMN_COORDS, position);
 			values.put(TrackTable.COLUMN_FLAGS, visibility);
-			
+			values.put(TrackTable.COLUMN_REP, reputation);
+			values.put(TrackTable.COLUMN_PIC, pictures);
 			Uri trackUri = getContentResolver().insert(
 					TrackContentProvider.CONTENT_URI, values);
 			
@@ -197,7 +208,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		}
 		else
 		{
-			Toast.makeText(TrackEditMapActivity.this,"No track saved" , Toast.LENGTH_LONG).show();			
+			Toast.makeText(TrackEditMapActivity.this,"No location set" , Toast.LENGTH_LONG).show();			
 		}
 	}
 

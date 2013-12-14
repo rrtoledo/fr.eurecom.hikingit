@@ -24,14 +24,6 @@ import android.widget.SimpleCursorAdapter;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
 
-/*
- * TracksOverviewActivity displays the existing todo items
- * in a list
- * 
- * You can create new ones via the ActionBar entry "Insert"
- * You can delete existing ones via a long press on the item
- */
-
 public class SearchTrackActivity extends ListActivity implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int DELETE_ID = Menu.FIRST + 1;

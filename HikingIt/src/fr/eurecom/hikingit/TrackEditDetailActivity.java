@@ -38,8 +38,8 @@ public class TrackEditDetailActivity extends Activity {
 		mDifficulty = (Spinner) findViewById(R.id.difficulty);
 		mNbCoords = (Spinner) findViewById(R.id.nbCoords);
 		mTitleText = (EditText) findViewById(R.id.track_edit_title);
-		mSummaryText = (EditText) findViewById(R.id.track_edit_summary);
-		mDuration = (EditText) findViewById(R.id.duration);
+		mSummaryText = (EditText) findViewById(R.id.tdSummary);
+		mDuration = (EditText) findViewById(R.id.tdDuration);
 		mPos = (EditText) findViewById(R.id.realposition);
 		mVis = (EditText) findViewById(R.id.tVis);
 		
@@ -75,12 +75,13 @@ public class TrackEditDetailActivity extends Activity {
 	}
 
 	private void fillData(Uri uri) {
-    String[] projection = { TrackTable.COLUMN_DIFFICULTY,
-    		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
+    String[] projection = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
+    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
     		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-    		TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS,
-    		TrackTable.COLUMN_SCORE, TrackTable.COLUMN_PIC};
+    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_SCORE,
+    		TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
+
     Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
     if (cursor != null) {
       cursor.moveToFirst();
@@ -147,8 +148,9 @@ public class TrackEditDetailActivity extends Activity {
 		String duration = mDuration.getText().toString();
 		String startX =  mPos.getText().toString();
 		String startY =  mPos.getText().toString();
-		String score = "";
-		String pics = "";
+		String rep = "0;0";
+		String score = Integer.toString( mDifficulty.getSelectedItemPosition() * Integer.valueOf(mDuration.getText().toString()) / 60 );
+		String pics = "picture_path";
 		
 		int indexX = startX.indexOf(";");
 		if (indexX!=-1)
@@ -175,16 +177,18 @@ public class TrackEditDetailActivity extends Activity {
 			return;
 		}
 		ContentValues values = new ContentValues();
-		values.put(TrackTable.COLUMN_DIFFICULTY, difficulty);
+
 		values.put(TrackTable.COLUMN_TITLE, title);
 		values.put(TrackTable.COLUMN_SUMMARY, summary);
-		values.put(TrackTable.COLUMN_NBCOORDS, nbcoords);
 		values.put(TrackTable.COLUMN_DURATION, duration);
+		values.put(TrackTable.COLUMN_DIFFICULTY, difficulty);
+		values.put(TrackTable.COLUMN_NBCOORDS, nbcoords);
+		values.put(TrackTable.COLUMN_COORDS, coords);
 		values.put(TrackTable.COLUMN_STARTX, startX);
 		values.put(TrackTable.COLUMN_STARTY, startY);
-		values.put(TrackTable.COLUMN_COORDS, coords);
 		values.put(TrackTable.COLUMN_FLAGS, visibility);
 		values.put(TrackTable.COLUMN_SCORE, score);
+		values.put(TrackTable.COLUMN_REP, rep);
 		values.put(TrackTable.COLUMN_PIC, pics);
 		
 		if (trackUri == null) {

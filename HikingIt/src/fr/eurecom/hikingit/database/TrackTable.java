@@ -8,28 +8,29 @@ public class TrackTable {
 	// Database table
 	public static final String TABLE_TRACK = "track";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_DIFFICULTY = "difficulty";
 	public static final String COLUMN_TITLE = "title";
 	public static final String COLUMN_SUMMARY = "summary";
-	public static final String COLUMN_NBCOORDS = "nbcoords";
 	public static final String COLUMN_DURATION = "duration";
+	public static final String COLUMN_DIFFICULTY = "difficulty";
+	public static final String COLUMN_NBCOORDS = "nbcoords";
+	public static final String COLUMN_COORDS = "coords";
 	public static final String COLUMN_STARTX = "startX";
 	public static final String COLUMN_STARTY = "startY";
-	public static final String COLUMN_COORDS = "coords";
-	public static final String COLUMN_FLAGS = "flags";
-	public static final String COLUMN_SCORE = "score";
+	public static final String COLUMN_FLAGS = "flags"; //visible, done, saved, with altitude
+	public static final String COLUMN_SCORE = "score"; //nb of points
+	public static final String COLUMN_REP = "reputation"; //download, likes, comments
 	public static final String COLUMN_PIC = "pics";
 
 
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table " + TABLE_TRACK
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_DIFFICULTY + " text not null, " + COLUMN_TITLE
-			+ " text not null, " + COLUMN_SUMMARY + " text not null, " 
-			+ COLUMN_NBCOORDS + " text not null, " + COLUMN_DURATION + " text not null, "
+			+ COLUMN_TITLE + " text not null, " + COLUMN_SUMMARY + " text not null, "
+			+ COLUMN_DURATION + " text not null, " + COLUMN_DIFFICULTY + " text not null, "
+			+ COLUMN_NBCOORDS + " text not null, " + COLUMN_COORDS + " text not null, "
 			+ COLUMN_STARTX + "double not null, " + COLUMN_STARTY + "double not null, " 
-			+ COLUMN_COORDS + " text not null, " + COLUMN_FLAGS + "text not null"
-			+ COLUMN_SCORE + " text not null, " + COLUMN_PIC + "text not null);";
+			+ COLUMN_FLAGS + "text not null, " + COLUMN_SCORE + " text not null, " 
+			+ COLUMN_REP + "text, " + COLUMN_PIC + "text);";
 
 	public static void onCreate(SQLiteDatabase database) {
 		database.execSQL(DATABASE_CREATE);

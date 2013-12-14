@@ -20,7 +20,6 @@ public class TrackDetailActivity extends Activity {
 	private TextView mSummaryText;
 	private TextView mDuration;
 	private TextView mPos;
-	private TextView mVis;
 
 	private Uri trackUri;
 
@@ -32,10 +31,8 @@ public class TrackDetailActivity extends Activity {
 		mDifficulty = (TextView) findViewById(R.id.difficulty);
 		mNbCoords = (TextView) findViewById(R.id.nbCoords);
 		mTitleText = (TextView) findViewById(R.id.track_edit_title);
-		mSummaryText = (TextView) findViewById(R.id.track_edit_summary);
-		mDuration = (TextView) findViewById(R.id.duration);
-		mPos = (TextView) findViewById(R.id.tvpos);
-		mVis = (TextView) findViewById(R.id.tvvis);
+		mSummaryText = (TextView) findViewById(R.id.tdSummary);
+		mDuration = (TextView) findViewById(R.id.tdDuration);
 
 		Bundle extras = getIntent().getExtras();
 
@@ -53,10 +50,12 @@ public class TrackDetailActivity extends Activity {
 	}
 
 	private void fillData(Uri uri) {
-		String[] projection = { TrackTable.COLUMN_DIFFICULTY,
-				TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-				TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_DURATION,
-				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_FLAGS };
+	    String[] projection = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
+	    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
+	    		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
+	    		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
+	    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_SCORE,
+	    		TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
 		Cursor cursor = getContentResolver().query(uri, projection, null, null,
 				null);
 		if (cursor != null) {
@@ -87,10 +86,6 @@ public class TrackDetailActivity extends Activity {
 			String coords = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
 			mPos.setText(coords, null);
-
-			String vis = cursor.getString(cursor
-					.getColumnIndexOrThrow(TrackTable.COLUMN_FLAGS));
-			mVis.setText(vis, null);
 			
 
 			// always close the cursor
