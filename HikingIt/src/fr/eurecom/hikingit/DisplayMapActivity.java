@@ -428,12 +428,14 @@ public class DisplayMapActivity extends FragmentActivity implements
 		if (listVect.get(a).size() < 2)
 			return;
 		else {
-			LatLng Location1 = listVect.get(a).get(0);
-			LatLng Location2 = listVect.get(a).get(1);
 
 			int colorThread = colors[2 * a % colors.length];
 
 			for (int m = 0; m < listVect.get(a).size() - 1; m++) {
+				
+				LatLng Location1 = listVect.get(a).get(m);
+				LatLng Location2 = listVect.get(a).get(m+1);
+				
 				Log.w("fr.eurecom.fr",
 						"draw line point " + m + Integer.toString(m + 1));
 				Log.w("fr.eurecom.fr",
@@ -443,11 +445,6 @@ public class DisplayMapActivity extends FragmentActivity implements
 						.add(Location1, Location2).width(3).color(colorThread);
 
 				googleMap.addPolyline(line);
-
-				Location1 = listVect.get(a).get(m + 1);
-				if (m + 2 < listVect.get(a).size()) {
-					Location2 = listVect.get(a).get(m + 2);
-				}
 			}
 		}
 	}

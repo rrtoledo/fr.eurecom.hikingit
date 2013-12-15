@@ -76,4 +76,16 @@
         android:hint="@string/track_edit_summary" >
     </TextView>
 
+    <TextView
+        android:id="@+id/tdNbCoords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nb Coords" />
+
+    <TextView
+        android:id="@+id/tdPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Position" />
+
 </LinearLayout>

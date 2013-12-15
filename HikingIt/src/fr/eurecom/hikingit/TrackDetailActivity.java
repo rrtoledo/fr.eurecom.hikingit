@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
@@ -29,13 +30,16 @@ public class TrackDetailActivity extends Activity {
 		super.onCreate(bundle);
 		setContentView(R.layout.track_detail);
 
-		mDifficulty = (TextView) findViewById(R.id.difficulty);
-		mNbCoords = (TextView) findViewById(R.id.nbCoords);
+		mDifficulty = (TextView) findViewById(R.id.tdDifficulty);
+		mNbCoords = (TextView) findViewById(R.id.tdNbCoords);
 		mTitleText = (TextView) findViewById(R.id.track_edit_title);
 		mSummaryText = (TextView) findViewById(R.id.tdSummary);
 		mDuration = (TextView) findViewById(R.id.tdDuration);
+		mPos = (TextView) findViewById(R.id.tdPosition);
 
 		Bundle extras = getIntent().getExtras();
+		Log.w("fr.eurecom.hikingit",
+				"getting extra : " + extras.toString());
 
 		// check from the saved Instance
 		trackUri = (bundle == null) ? null : (Uri) bundle
@@ -54,8 +58,8 @@ public class TrackDetailActivity extends Activity {
 
 	private void fillData(Uri uri) {
 		
-		Toast.makeText(TrackDetailActivity.this, "URI : " + uri,
-				Toast.LENGTH_LONG).show();
+		Log.w("fr.eurecom.hikingit",
+				"track detail fill uri  : " + uri.toString());
 		
 	    String[] projection = { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
 	    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
@@ -67,36 +71,33 @@ public class TrackDetailActivity extends Activity {
 		Cursor cursor = getContentResolver().query(uri, projection, null, null,
 				null);
 		if (cursor != null && cursor.moveToFirst()) {
-
 			cursor.moveToFirst();
-			Toast.makeText(TrackDetailActivity.this, "Cursor " + cursor,
-					Toast.LENGTH_LONG).show();
+		
+			String title = cursor.getString(cursor
+					.getColumnIndexOrThrow(TrackTable.COLUMN_TITLE));
+			mTitleText.setText(title, null);
+			
+			String summary = cursor.getString(cursor
+					.getColumnIndexOrThrow(TrackTable.COLUMN_SUMMARY));
+			mSummaryText.setText(summary, null);
+			
+			String duration = cursor.getString(cursor
+					.getColumnIndexOrThrow(TrackTable.COLUMN_DURATION));
+			mDuration.setText(duration, null);
 
 			String difficulty = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_DIFFICULTY));
-			//mDifficulty.setText(difficulty);
+			mDifficulty.setText(difficulty);
+
 
 			String nbCoordonates = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS));
-			//mNbCoords.setText(nbCoordonates, null);
-
-			String title = cursor.getString(cursor
-					.getColumnIndexOrThrow(TrackTable.COLUMN_TITLE));
-			//mTitleText.setText(title, null);
-
-			String summary = cursor.getString(cursor
-					.getColumnIndexOrThrow(TrackTable.COLUMN_SUMMARY));
-			//mSummaryText.setText(summary, null);
-
-			String duration = cursor.getString(cursor
-					.getColumnIndexOrThrow(TrackTable.COLUMN_DURATION));
-			//mDuration.setText(duration, null);
+			mNbCoords.setText(nbCoordonates, null);
 
 			String coords = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
-			//mPos.setText(coords, null);
+			mPos.setText(coords, null);
 			
-
 			// always close the cursor
 			cursor.close();
 		}
