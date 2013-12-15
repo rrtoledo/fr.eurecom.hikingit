@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -48,8 +49,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 	private double longitude;
 	private double latitude;
 
-	private double marginRefresh;
-	private double margin;
+	private double marginRefresh = 10;
+	private double margin = 5;
 
 	// blue, purple, green, orange, red - first marker - second thread
 	int[] colors = { 0xFF0099CC, 0xFF33B5E5, 0xFF9933CC, 0xFFAA66CC,
@@ -128,7 +129,9 @@ public class DisplayMapActivity extends FragmentActivity implements
 					public void onLocationChanged(Location location) {
 						// redraw the marker when get location update.
 						if (location.getLatitude() > (latitude + marginRefresh)
-								|| location.getLongitude() > (longitude + marginRefresh)) {
+								|| location.getLatitude() < (latitude - marginRefresh)
+								|| location.getLongitude() > (longitude + marginRefresh)
+								|| location.getLongitude() < (longitude - marginRefresh)) {
 							latitude = location.getLatitude();
 							longitude = location.getLongitude();
 							fillData();
@@ -261,6 +264,16 @@ public class DisplayMapActivity extends FragmentActivity implements
 		// Setting latitude and longitude in the TextView tv_location
 		tvLocation.setText("Latitude:" + latitude + ", Longitude:" + longitude);
 
+		if (location.getLatitude() > (latitude + marginRefresh)
+				|| location.getLatitude() < (latitude - marginRefresh)
+				|| location.getLongitude() > (longitude + marginRefresh)
+				|| location.getLongitude() < (longitude - marginRefresh)) {
+			latitude = location.getLatitude();
+			longitude = location.getLongitude();
+			fillData();
+		}
+		drawMarker(location);
+
 	}
 
 	@Override
@@ -300,59 +313,91 @@ public class DisplayMapActivity extends FragmentActivity implements
 				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP,
 				TrackTable.COLUMN_PIC };
 
-		String selection = ""; //"startX < ? AND startY < ?"; //"flags = ? AND startX < ? AND startY < ?";
+		String selection = "flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
 
-		double limitX = latitude + margin;
-		String lgtd = String.valueOf(limitX);
-		Toast.makeText(DisplayMapActivity.this, "longitude max : " + lgtd,
+		double limitMaxX = latitude + margin;
+		String lttdMax = String.valueOf(limitMaxX);
+		Toast.makeText(DisplayMapActivity.this, "latitude max : " + lttdMax,
 				Toast.LENGTH_LONG).show();
 
-		double limitY = longitude + margin;
-		String lttd = String.valueOf(limitY);
-		Toast.makeText(DisplayMapActivity.this, "latitude max : " + lttd,
+		double limitMinX = latitude - margin;
+		String lttdMin = String.valueOf(limitMinX);
+		Toast.makeText(DisplayMapActivity.this, "latitude min : " + lttdMin,
 				Toast.LENGTH_LONG).show();
 
-		String[] selectionArgs = {}; //{lttd, lgtd}; //{ "1", lttd, lgtd };
+		double limitMaxY = longitude + margin;
+		String lgtdMax = String.valueOf(limitMaxY);
+		Toast.makeText(DisplayMapActivity.this, "longitude max : " + lgtdMax,
+				Toast.LENGTH_LONG).show();
+
+		double limitMinY = longitude - margin;
+		String lgtdMin = String.valueOf(limitMinY);
+		Toast.makeText(DisplayMapActivity.this, "longitude min : " + lgtdMin,
+				Toast.LENGTH_LONG).show();
+
+		String[] selectionArgs = { "1", lttdMax, lttdMin, lgtdMax, lgtdMin };
 		String order = "";
 		Cursor cursor = getContentResolver().query(
 				TrackContentProvider.CONTENT_URI, projection, selection,
 				selectionArgs, order);
 		if (cursor != null && cursor.moveToFirst()) {
 			cursor.moveToFirst();
-			int index = 0;
-			int index2 = 0;
-			for (int i = cursor.getPosition(); i <= cursor.getCount(); i++) {
+			Log.w("fr.eurecom.fr", "cursor " + cursor.toString());
+			Log.w("fr.eurecom.fr", "cursor nb rows " + cursor.getCount());
+			for (int i = cursor.getPosition(); i < cursor.getCount(); i++) {
+				int index = 0;
+				int index2 = 0;
+
 				int NbCoords = Integer.valueOf(cursor.getString(cursor
 						.getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS)));
+				Log.w("fr.eurecom.fr", "cursor position " + Integer.toString(i)
+						+ " sur " + Integer.toString(cursor.getCount() - 1));
 
 				String Coords = cursor.getString(cursor
 						.getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
+				Log.w("fr.eurecom.fr", Coords);
 
 				Vector<LatLng> vect = new Vector<LatLng>();
 				listVect.add(vect);
-				Toast.makeText(DisplayMapActivity.this, "nb coords " + NbCoords,
-						Toast.LENGTH_LONG).show();
-				Toast.makeText(DisplayMapActivity.this, "coords " + Coords,
-						Toast.LENGTH_LONG).show();				
 
 				for (int j = 0; j < NbCoords; j++) {
+					Log.w("fr.eurecom.fr", "position latlong " + j + " sur "
+							+ Integer.toString(NbCoords - 1));
 					index2 = Coords.indexOf(";", index);
-					Toast.makeText(DisplayMapActivity.this, "index " + index,
-							Toast.LENGTH_LONG).show();
-					Toast.makeText(DisplayMapActivity.this, "index " + index,
-							Toast.LENGTH_LONG).show();
+
+					Log.w("fr.eurecom.fr",
+							"index " + index + " sur "
+									+ Integer.toString(Coords.length() - 1));
+					Log.w("fr.eurecom.fr", "index2 " + index2 + " sur "
+							+ Integer.toString(Coords.length() - 1));
+					Log.w("fr.eurecom.fr",
+							"lat : " + Coords.substring(index + 1, index2));
+
 					double lat = Double.valueOf(Coords.substring(index + 1,
 							index2));
 					index = Coords.indexOf("(", index2);
+					if (index == -1)
+						index = Coords.length();
+					Log.w("fr.eurecom.fr", "new index : " + index + " sur "
+							+ Integer.toString(Coords.length() - 1));
+					Log.w("fr.eurecom.fr",
+							"long : " + Coords.substring(index2 + 1, index - 1));
+
 					double lgt = Double.valueOf(Coords.substring(index2 + 1,
 							index - 1));
 					LatLng latlong = new LatLng(lat, lgt);
+					Log.w("fr.eurecom.fr", "latlong : " + latlong.toString());
 					listVect.get(i).add(latlong);
+
 				}
-				cursor.moveToNext();
+				Log.w("fr.eurecom.fr", "vector : " + listVect.get(i).toString());
+				if (i < cursor.getCount() - 1) {
+					cursor.moveToNext();
+				}
 			}
 
 			// always close the cursor
+			Log.w("fr.eurecom.fr", "vector of vectors : " + listVect.toString());
 			cursor.close();
 			addMarkers();
 		} else {
@@ -364,8 +409,13 @@ public class DisplayMapActivity extends FragmentActivity implements
 	// set an idea on the marker
 	// onclick marker => intent
 	public void addMarkers() {
-		for (int m = 0; m <= listVect.size(); m++) {
-			LatLng point = listVect.get(m).get(1);
+		Log.w("fr.eurecom.fr", "liste de " + listVect.size() + " track");
+		for (int m = 0; m < listVect.size(); m++) {
+			Log.w("fr.eurecom.fr",
+					"track " + m + " sur "
+							+ Integer.toString(listVect.size() - 1));
+			LatLng point = listVect.get(m).get(0);
+			Log.w("fr.eurecom.fr", "marker en " + point.toString());
 			googleMap.addMarker(new MarkerOptions().position(point).title(
 					point.toString()));
 			drawLine(m);
@@ -373,7 +423,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 	}
 
 	public void drawLine(int a) {
-
+		Log.w("fr.eurecom.fr", "drawline, vecteur de taille  "
+				+ listVect.get(a).size());
 		if (listVect.get(a).size() < 2)
 			return;
 		else {
@@ -383,13 +434,20 @@ public class DisplayMapActivity extends FragmentActivity implements
 			int colorThread = colors[2 * a % colors.length];
 
 			for (int m = 0; m < listVect.get(a).size() - 1; m++) {
+				Log.w("fr.eurecom.fr",
+						"draw line point " + m + Integer.toString(m + 1));
+				Log.w("fr.eurecom.fr",
+						"draw line between " + Location1.toString() + " et "
+								+ Location2.toString());
 				PolylineOptions line = new PolylineOptions()
-						.add(Location1, Location2).width(2).color(colorThread);
+						.add(Location1, Location2).width(3).color(colorThread);
 
 				googleMap.addPolyline(line);
 
-				Location1 = listVect.get(a).get(m);
-				Location2 = listVect.get(a).get(m + 1);
+				Location1 = listVect.get(a).get(m + 1);
+				if (m + 2 < listVect.get(a).size()) {
+					Location2 = listVect.get(a).get(m + 2);
+				}
 			}
 		}
 	}

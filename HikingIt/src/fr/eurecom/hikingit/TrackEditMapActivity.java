@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -162,20 +163,23 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		}
 	}
 	
-	public void myFinishedTrack(){
+	public void myFinishedTrack(View v){
 		
 		if (!vectorLoc.isEmpty())
 		{
 			String position = "";
 			int NbCoords = vectorLoc.size();
-			for (int j = 0; j < NbCoords; j++) {		
+
+			for (int j = 0; j < NbCoords; j++) {
 				position += "(";
 				position += Double.toString(vectorLoc.get(j).latitude);
+
 				position += ";";
 				position += Double.toString(vectorLoc.get(j).longitude);
+				position += ")";
 			}
-			
-			String startX = position.substring(1, position.indexOf(";"));
+
+			String startX = position.substring(1, position.indexOf(";"));;
 			String startY = position.substring(position.indexOf(";")+1, position.indexOf(")"));
 			String difficulty = "1";
 			Object coords = vectorLoc.size();
@@ -186,6 +190,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			String visibility = "1";
 			String reputation = "0;0";
 			String pictures = "picture_path";
+			String score = "1";
 			
 			ContentValues values = new ContentValues();
 			values.put(TrackTable.COLUMN_TITLE, title);
@@ -197,13 +202,12 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			values.put(TrackTable.COLUMN_STARTX, startX);
 			values.put(TrackTable.COLUMN_STARTY, startY);
 			values.put(TrackTable.COLUMN_FLAGS, visibility);
+			values.put(TrackTable.COLUMN_SCORE, score);
 			values.put(TrackTable.COLUMN_REP, reputation);
 			values.put(TrackTable.COLUMN_PIC, pictures);
+			
 			Uri trackUri = getContentResolver().insert(
 					TrackContentProvider.CONTENT_URI, values);
-			
-			getContentResolver().update(trackUri, values, null, null);
-
 			
 		}
 		else
@@ -219,7 +223,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		tvLocInfo.setText("New marker added@" + point.toString());
 		googleMap.addMarker(new MarkerOptions().position(point).title(
 				point.toString()));
-
+		Log.w("fr.eurecom.hikingit", point.toString());
 		markerClicked = false;
 	}
 
