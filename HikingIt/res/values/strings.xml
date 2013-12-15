@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="b_addmark">Hello world!</string>
-    <string name="no_tracks">Currently there are no tracks maintained</string>
+    <string name="no_tracks">No tracks nearby found</string>
     <string name="menu_insert">Add Item</string>
     <string name="menu_delete">Delete Track</string>
     <string name="menu_edit">Edit Track</string>

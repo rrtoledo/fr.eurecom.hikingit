@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -34,6 +35,7 @@ public class SearchTrackActivity extends ListActivity implements
 	private double longitude;
 	private double latitude;
 	private double margin = 5;
+	private double marginRefresh = 10;
 
 	/** Called when the activity is first created. */
 
@@ -126,6 +128,27 @@ public class SearchTrackActivity extends ListActivity implements
 
 		// Fields from the database (projection)
 		// Must include the _id column for the adapter to work
+		
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
+        String selection = "flags = ? AND startX < ? AND startY < ?";
+        
+        double limitX= longitude + margin;
+        String lgt = String.valueOf(limitX);
+        
+        double limitY= latitude + margin;
+        String ltt = String.valueOf(limitY);    
+        
+        String[] selectionArgs = {"1",lgt,ltt};
+        String order = "difficulty";
+        
+		Cursor cursor = getContentResolver().query(
+				TrackContentProvider.CONTENT_URI, projection, selection,
+				selectionArgs, order);
+		if (cursor != null)
+		{
+			Log.w("fr.eurecom.hikingit"," fill data cursor "+ cursor.toString() + " nb answers " + cursor.getCount());
+		}
+		
 		String[] from = new String[] { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
 		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.label, R.id.diff };
@@ -158,10 +181,19 @@ public class SearchTrackActivity extends ListActivity implements
         String ltt = String.valueOf(limitY);    
         
         String[] selectionArgs = {"1",lgt,ltt};
-        String order = "difficulty LIMIT 10";
+        String order = "difficulty";
+        
+		Cursor cursor = getContentResolver().query(
+				TrackContentProvider.CONTENT_URI, projection, selection,
+				selectionArgs, order);
+		if (cursor != null)
+		{
+			Log.w("fr.eurecom.hikingit","cursor "+ cursor.toString() + " nb answers " + cursor.getCount());
+		}
+        
 		CursorLoader cursorLoader = new CursorLoader(this,
 				TrackContentProvider.CONTENT_URI, projection, selection, selectionArgs, order);
-		return cursorLoader; //LIMIT 10
+		return cursorLoader;
 	}
 
 	@Override
@@ -178,9 +210,13 @@ public class SearchTrackActivity extends ListActivity implements
 	private class mylocationlistener implements LocationListener {
 		@Override
 		public void onLocationChanged(Location location) {
-			if (location != null) {
+			if (location.getLatitude() > (latitude + marginRefresh)
+					|| location.getLatitude() < (latitude - marginRefresh)
+					|| location.getLongitude() > (longitude + marginRefresh)
+					|| location.getLongitude() < (longitude - marginRefresh)) {
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
+				fillData();
 			}
 		}
 
