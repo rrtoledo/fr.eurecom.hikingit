@@ -1,6 +1,7 @@
 package fr.eurecom.hikingit;
 
 import java.util.Vector;
+import java.util.ArrayList;
 
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -18,9 +19,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
+
+
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,18 +42,19 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 public class TrackEditMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
-		OnMarkerClickListener {
+		OnMarkerClickListener, OnMarkerDragListener {
 
-	static final LatLng Location1 = new LatLng(43.60191559, 7.100901604);
-	static final LatLng Location2 = new LatLng(43.60331405, 7.101652622);
 
 	GoogleMap googleMap;
 	TextView tvLocInfo;
 	boolean markerClicked = false;
 	Polyline polyline;
 	PolylineOptions rectOptions;
-	Vector<LatLng> vectorLoc = new Vector<LatLng>();
+	public Vector<LatLng> vectorLoc = new Vector<LatLng>();
 	boolean ButtonEnableMarkClicked = false;
+	ArrayList<Marker> markers = new ArrayList<Marker>();
+	ArrayList<Polyline> polylines = new ArrayList<Polyline>();
+	int i = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +79,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		} else { // Google Play Services are available
 
 			// Getting reference to the SupportMapFragment of activity_main.xml
-			SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.map);
+			SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
 			// Getting GoogleMap object from the fragment
 			googleMap = fm.getMap();
@@ -100,42 +104,101 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			googleMap.setOnMapLongClickListener(this);
 			googleMap.setOnMarkerClickListener(this);
 
-			LocationListener locationListener = new LocationListener() {
-
-				public void onLocationChanged(Location location) {
-					// redraw the marker when get location update.
-					drawMarker(location);
-					drawOtherMarkers();
-				}
+			googleMap.setOnMarkerDragListener(new OnMarkerDragListener() {
+				int MarkerIndex;
 
 				@Override
-				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
+				public void onMarkerDragStart(Marker marker) { // TODO
 
-				}
+					// Toast.makeText(getApplicationContext(),
+					// "I started dragging ;)", Toast.LENGTH_SHORT).show();
+					System.out.println("------START----" + MarkerIndex);
 
-				@Override
-				public void onProviderEnabled(String provider) {
-					// TODO Auto-generated method stub
+					MarkerIndex = markers.indexOf(marker);
+					System.out.println("------START@----" + MarkerIndex);
 
 				}
 
 				@Override
-				public void onStatusChanged(String provider, int status,
-						Bundle extras) {
-					// TODO Auto-generated method stub
+				public void onMarkerDragEnd(Marker marker) { // TODO
+					System.out.println("------STOP----" + MarkerIndex);
+
+					int a = 0;
 
 				}
-			};
+
+				@Override
+				public void onMarkerDrag(Marker marker) {
+
+					System.out.println("------I am HERE----" + MarkerIndex);
+					// update list of markers and vector lines,
+					// Marker markerTest = m.next();
+					// we update markers
+					// we update lines if there are more than 2 markers
+
+					markers.get(MarkerIndex).setPosition(marker.getPosition());
+					System.out.println("------After change----" + MarkerIndex);
+					vectorLoc.set(MarkerIndex, marker.getPosition());
+
+					if (markers.size() != 1) {
+						if (MarkerIndex == 0) {
+							polylines.get(0).remove();
+							polylines.remove(0);
+							Polyline linetemp = googleMap
+									.addPolyline(new PolylineOptions()
+											.add(vectorLoc.get(0),
+													vectorLoc.get(1)).width(3)
+											.color(Color.YELLOW));
+							polylines.add(0, linetemp);
+						} else {
+							if (MarkerIndex == markers.size() - 1) {
+								polylines.get(MarkerIndex - 1).remove();
+								polylines.remove(MarkerIndex - 1);
+								Polyline linetemp = googleMap.addPolyline(new PolylineOptions()
+										.add(vectorLoc.get(MarkerIndex - 1),
+												vectorLoc.get(MarkerIndex))
+										.width(3).color(Color.YELLOW));
+								polylines.add(MarkerIndex - 1, linetemp);
+							} else {
+								System.out
+										.println("size of polylineeeeeeeeeeee"
+												+ polylines.size());
+								polylines.get(MarkerIndex).remove();
+								polylines.remove(MarkerIndex);
+								System.out.println("valueeeeeeeeeeee"
+										+ polylines.get(0));
+								polylines.get(MarkerIndex - 1).remove();
+								polylines.remove(MarkerIndex - 1);
+								System.out
+										.println("size of polylineeeeeeeeeeee"
+												+ polylines.size());
+
+								Polyline linetemp1 = googleMap.addPolyline(new PolylineOptions()
+										.add(vectorLoc.get(MarkerIndex - 1),
+												vectorLoc.get(MarkerIndex))
+										.width(3).color(Color.YELLOW));
+								polylines.add(MarkerIndex - 1, linetemp1);
+
+								Polyline linetemp2 = googleMap.addPolyline(new PolylineOptions()
+										.add(vectorLoc.get(MarkerIndex),
+												vectorLoc.get(MarkerIndex + 1))
+										.width(3).color(Color.YELLOW));
+								polylines.add(MarkerIndex, linetemp2);
+
+							}
+						}
+					}
+
+				}
+
+			});
+
 
 			if (location != null) {
 				// PLACE THE INITIAL MARKER
 				drawMarker(location);
-				drawOtherMarkers();
 			}
 
-			locationManager.requestLocationUpdates(provider, 3000, 0,
-					locationListener);
 
 		}
 
@@ -156,17 +219,53 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			if (ButtonEnableMarkClicked == false) {
 				ButtonEnableMarkClicked = true;
 				buttonAddTrack.setText("Stop Track");
+
+				if (markers.size() != 0) {
+					for (i = 0; i <= markers.size() - 1; i++) {
+						markers.get(i).setVisible(true);
+						markers.get(i)
+								.setIcon(
+										BitmapDescriptorFactory
+												.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+						markers.get(i).setDraggable(true);
+					}
+
+				}
 			} else {
+				if (markers.size() > 0) {
+
+					markers.get(0)
+							.setIcon(
+									BitmapDescriptorFactory
+											.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+					markers.get(0).setTitle("START");
+
+					if (markers.size() > 1) {
+						markers.get(markers.size() - 1)
+								.setIcon(
+										BitmapDescriptorFactory
+												.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+						markers.get(markers.size() - 1).setTitle("END");
+
+						for (i = 1; i < markers.size() - 1; i++) {
+							markers.get(i).setVisible(false);
+						}
+						for (i = 0; i <= markers.size() - 1; i++) {
+							markers.get(i).setDraggable(false);
+						}
+					}
+
+				}
+
 				ButtonEnableMarkClicked = false;
 				buttonAddTrack.setText("Add Mark");
 			}
 		}
 	}
-	
-	public void myFinishedTrack(View v){
-		
-		if (!vectorLoc.isEmpty())
-		{
+
+	public void myFinishedTrack(View v) {
+
+		if (!vectorLoc.isEmpty()) {
 			String position = "";
 			int NbCoords = vectorLoc.size();
 
@@ -178,9 +277,11 @@ public class TrackEditMapActivity extends FragmentActivity implements
 				position += Double.toString(vectorLoc.get(j).longitude);
 				position += ")";
 			}
-
-			String startX = position.substring(1, position.indexOf(";"));;
-			String startY = position.substring(position.indexOf(";")+1, position.indexOf(")"));
+			Log.w("fr.eurecom.hikingit","position : "+position);
+			String startX = position.substring(1, position.indexOf(";"));
+			;
+			String startY = position.substring(position.indexOf(";") + 1,
+					position.indexOf(")"));
 			String difficulty = "1";
 			Object coords = vectorLoc.size();
 			String nbcoords = coords.toString();
@@ -191,7 +292,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			String reputation = "0;0";
 			String pictures = "picture_path";
 			String score = "1";
-			
+
 			ContentValues values = new ContentValues();
 			values.put(TrackTable.COLUMN_TITLE, title);
 			values.put(TrackTable.COLUMN_SUMMARY, summary);
@@ -205,44 +306,116 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			values.put(TrackTable.COLUMN_SCORE, score);
 			values.put(TrackTable.COLUMN_REP, reputation);
 			values.put(TrackTable.COLUMN_PIC, pictures);
-			
+
 			Uri trackUri = getContentResolver().insert(
 					TrackContentProvider.CONTENT_URI, values);
-			
-		}
-		else
-		{
-			Toast.makeText(TrackEditMapActivity.this,"No location set" , Toast.LENGTH_LONG).show();			
+
+		} else {
+			Toast.makeText(TrackEditMapActivity.this, "No location set",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 
+	@Override
 	public void onMapLongClick(LatLng point) {
 		if (!ButtonEnableMarkClicked)
 			return;
+
 		vectorLoc.add(point);
-		tvLocInfo.setText("New marker added@" + point.toString());
-		googleMap.addMarker(new MarkerOptions().position(point).title(
-				point.toString()));
-		Log.w("fr.eurecom.hikingit", point.toString());
+		int a = vectorLoc.size() - 1;
+		String s = "num:" + a;
+		Marker marker = googleMap.addMarker(new MarkerOptions()
+				.position(point)
+				.draggable(true)
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+				.title(s));
+		markers.add(marker);
+
+		if (vectorLoc.size() != 0) {
+
+			if (vectorLoc.size() > 1) {
+				Polyline line2 = googleMap.addPolyline(new PolylineOptions()
+						.add(vectorLoc.get(vectorLoc.size() - 2),
+								vectorLoc.get(vectorLoc.size() - 1)).width(3)
+						.color(Color.YELLOW));
+				polylines.add(line2);
+
+			}
+		}
+
 		markerClicked = false;
+
 	}
 
-	/*
-	 * public boolean onMarkerClick(Marker marker) {
-	 * 
-	 * if(markerClicked){
-	 * 
-	 * if(polyline != null){ polyline.remove(); polyline = null; }
-	 * 
-	 * rectOptions.add(marker.getPosition()); rectOptions.color(Color.RED);
-	 * polyline =googleMap.addPolyline(rectOptions); }else{ if(polyline !=
-	 * null){ polyline.remove(); polyline = null; }
-	 * 
-	 * rectOptions = new PolylineOptions().add(marker.getPosition());
-	 * markerClicked = true; }
-	 * 
-	 * return true; }
-	 */
+	@Override
+	public boolean onMarkerClick(Marker marker) {
+		if (!ButtonEnableMarkClicked) {
+			marker.getTitle();
+			return false;
+		}
+		marker.remove();
+		Toast.makeText(getApplicationContext(), "Marker removed from the list",
+				Toast.LENGTH_SHORT).show();
+
+		for (int m = 0; m < markers.size(); m++) {
+			// Marker markerTest = m.next();
+			System.out.println("m = " + m + "  value= " + markers.get(m)
+					+ "    marker = " + marker);
+
+			if (markers.get(m).getPosition().equals(marker.getPosition())) {
+				Toast.makeText(getApplicationContext(),
+						"It is removed, m=" + m, Toast.LENGTH_SHORT).show();
+				int index = m;// markers.indexOf(m);
+				System.out.println("indexxxxxxx" + index);
+				if (markers.size() != 1) {
+					if (index == 0) {
+						polylines.get(0).remove();
+						polylines.remove(0);
+					} else {
+						if (index == markers.size() - 1) {
+							polylines.get(index - 1).remove();
+							polylines.remove(index - 1);
+						} else {
+							System.out.println("size of polylineeeeeeeeeeee"
+									+ polylines.size());
+							polylines.get(index).remove();
+							polylines.remove(index);
+							System.out.println("valueeeeeeeeeeee"
+									+ polylines.get(0));
+
+							polylines.get(index - 1).remove();
+							polylines.remove(index - 1);
+							System.out.println("size of polylineeeeeeeeeeee"
+									+ polylines.size());
+							Polyline linetemp = googleMap
+									.addPolyline(new PolylineOptions()
+											.add(vectorLoc.get(index - 1),
+													vectorLoc.get(index + 1))
+											.width(3).color(Color.YELLOW));
+							polylines.add(index - 1, linetemp);
+
+						}
+					}
+				} else {
+					vectorLoc.remove(0);
+					markers.remove(0);
+					googleMap.clear();
+					break;
+				}
+
+				vectorLoc.remove(vectorLoc.get(m));
+				markers.remove(markers.get(m));
+
+			}
+
+		}
+
+		markerClicked = true;
+
+		return true;
+
+	}
 
 	private void drawMarker(Location location) {
 		googleMap.clear();
@@ -258,43 +431,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 				.title("ME"));
 	}
 
-	private void drawOtherMarkers() {
-
-		googleMap.addMarker(new MarkerOptions()
-				.position(Location1)
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-				.title("1"));
-		googleMap.addMarker(new MarkerOptions()
-				.position(Location2)
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-				.title("2"));
-
-		PolylineOptions line = new PolylineOptions().add(Location1, Location2)
-				.width(2).color(Color.RED);
-
-		googleMap.addPolyline(line);
-
-		if (vectorLoc.size() != 0) {
-			for (int i = 0; i < vectorLoc.size(); i++) {
-				String s = "num:" + i;
-				googleMap
-						.addMarker(new MarkerOptions()
-								.position(vectorLoc.get(i))
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-								.title(s));
-				if (i != vectorLoc.size() - 1) {
-					PolylineOptions line2 = new PolylineOptions()
-							.add(vectorLoc.get(i), vectorLoc.get(i + 1))
-							.width(3).color(Color.YELLOW);
-					googleMap.addPolyline(line2);
-				}
-			}
-
-		}
-	}
+	
 
 	@Override
 	public void onLocationChanged(Location location) {
@@ -343,10 +480,23 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		return true;
 	}
 
+
 	@Override
-	public boolean onMarkerClick(Marker marker) {
+	public void onMarkerDrag(Marker marker) {
 		// TODO Auto-generated method stub
-		return false;
+
+	}
+
+	@Override
+	public void onMarkerDragEnd(Marker marker) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMarkerDragStart(Marker marker) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
