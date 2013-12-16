@@ -182,8 +182,8 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			String startX = position.substring(1, position.indexOf(";"));;
 			String startY = position.substring(position.indexOf(";")+1, position.indexOf(")"));
 			String difficulty = "1";
-			Object coords = vectorLoc.size();
-			String nbcoords = coords.toString();
+			String coords = position;
+			int nbcoords = NbCoords;
 			String title = "new Track";
 			String summary = "summary";
 			String duration = "60";

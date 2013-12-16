@@ -7,6 +7,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,6 +36,7 @@ public class SearchTrackActivity extends ListActivity implements
 	private double longitude;
 	private double latitude;
 	private double margin = 5;
+	private double nonRefreshArea[] = {0,0,0,0};
 	private double marginRefresh = 10;
 
 	/** Called when the activity is first created. */
@@ -48,8 +50,28 @@ public class SearchTrackActivity extends ListActivity implements
 		LocationListener ll = new mylocationlistener();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
 
+		// Creating a criteria object to retrieve provider
+		Criteria criteria = new Criteria();
+
+		// Getting the name of the best provider
+		String provider = lm.getBestProvider(criteria, true);
+
+		// Getting Current Location
+		Location location = lm.getLastKnownLocation(provider);
+
+		if (location != null) {
+			longitude = location.getLongitude();
+			latitude = location.getLatitude();
+			Log.w("fr.eurecom.hikingit","location initialized "+latitude +" "+longitude);
+			nonRefreshArea[0] =	(latitude - marginRefresh);
+			nonRefreshArea[1] =	(latitude + marginRefresh);
+			nonRefreshArea[2] =	(longitude - marginRefresh);
+			nonRefreshArea[3] =	(longitude + marginRefresh);
+			fillData();
+		}
+		
+		
 		this.getListView().setDividerHeight(2);
-		fillData();
 		registerForContextMenu(getListView());
 	}
 
@@ -130,15 +152,22 @@ public class SearchTrackActivity extends ListActivity implements
 		// Must include the _id column for the adapter to work
 		
 		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
-        String selection = "flags = ? AND startX < ? AND startY < ?";
+        String selection = "flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
         
-        double limitX= longitude + margin;
-        String lgt = String.valueOf(limitX);
+        double limitXMax= latitude + margin;
+        String lttMax = String.valueOf(limitXMax);
+
+        double limitXMin= latitude - margin;
+        String lttMin = String.valueOf(limitXMin);
         
-        double limitY= latitude + margin;
-        String ltt = String.valueOf(limitY);    
+        double limitYMax= longitude + margin;
+        String lgtMax = String.valueOf(limitYMax);
         
-        String[] selectionArgs = {"1",lgt,ltt};
+        double limitYMin= longitude - margin;
+        String lgtMin = String.valueOf(limitYMin); 
+        
+        String[] selectionArgs = {"1", lttMax, lttMin, lgtMax, lgtMin};
+        Log.w("fr.eurecom.hikingit", "selection args " + selectionArgs[1]+" " + selectionArgs[2]+" " + selectionArgs[3]+" " + selectionArgs[4]);
         String order = "difficulty";
         
 		Cursor cursor = getContentResolver().query(
@@ -154,7 +183,8 @@ public class SearchTrackActivity extends ListActivity implements
 		int[] to = new int[] { R.id.label, R.id.diff };
 
 		getLoaderManager().initLoader(0, null, this);
-		adapter = new SimpleCursorAdapter(this, R.layout.track_row, null, from,
+		
+		adapter = new SimpleCursorAdapter(this, R.layout.track_row, cursor, from,
 				to, 0);
 
 		setListAdapter(adapter);
@@ -172,15 +202,21 @@ public class SearchTrackActivity extends ListActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
-        String selection = "flags = ? AND startX < ? AND startY < ?";
+        String selection = "flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
         
-        double limitX= longitude + margin;
-        String lgt = String.valueOf(limitX);
+        double limitXMax= latitude + margin;
+        String lttMax = String.valueOf(limitXMax);
+
+        double limitXMin= latitude - margin;
+        String lttMin = String.valueOf(limitXMin);
         
-        double limitY= latitude + margin;
-        String ltt = String.valueOf(limitY);    
+        double limitYMax= longitude + margin;
+        String lgtMax = String.valueOf(limitYMax);
         
-        String[] selectionArgs = {"1",lgt,ltt};
+        double limitYMin= longitude - margin;
+        String lgtMin = String.valueOf(limitYMin);
+        
+        String[] selectionArgs = {"1", lttMax, lttMin, lgtMax, lgtMin};
         String order = "difficulty";
         
 		Cursor cursor = getContentResolver().query(
@@ -210,12 +246,19 @@ public class SearchTrackActivity extends ListActivity implements
 	private class mylocationlistener implements LocationListener {
 		@Override
 		public void onLocationChanged(Location location) {
-			if (location.getLatitude() > (latitude + marginRefresh)
-					|| location.getLatitude() < (latitude - marginRefresh)
-					|| location.getLongitude() > (longitude + marginRefresh)
-					|| location.getLongitude() < (longitude - marginRefresh)) {
+			if (location.getLatitude() < nonRefreshArea[0]
+					|| location.getLatitude() > nonRefreshArea[1]
+					|| location.getLongitude() < nonRefreshArea[2]
+					|| location.getLongitude() > nonRefreshArea[3]) {
+				
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
+				
+				nonRefreshArea[0] =	(latitude - marginRefresh);
+				nonRefreshArea[1] =	(latitude + marginRefresh);
+				nonRefreshArea[2] =	(longitude - marginRefresh);
+				nonRefreshArea[3] =	(longitude + marginRefresh);
+				
 				fillData();
 			}
 		}

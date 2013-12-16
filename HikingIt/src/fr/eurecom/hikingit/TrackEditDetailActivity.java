@@ -5,7 +5,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +23,6 @@ import fr.eurecom.hikingit.R;
  */
 public class TrackEditDetailActivity extends Activity {
 	private Spinner mDifficulty;
-	private Spinner mNbCoords;
 	private EditText mTitleText;
 	private EditText mSummaryText;
 	private EditText mDuration;
@@ -36,7 +37,6 @@ public class TrackEditDetailActivity extends Activity {
 		setContentView(R.layout.track_edit);
 
 		mDifficulty = (Spinner) findViewById(R.id.difficulty);
-		mNbCoords = (Spinner) findViewById(R.id.nbCoords);
 		mTitleText = (EditText) findViewById(R.id.track_edit_title);
 		mSummaryText = (EditText) findViewById(R.id.tdSummary);
 		mDuration = (EditText) findViewById(R.id.tdDuration);
@@ -44,8 +44,7 @@ public class TrackEditDetailActivity extends Activity {
 		mVis = (EditText) findViewById(R.id.tVis);
 		
 		Button confirmButton = (Button) findViewById(R.id.track_edit_button);
-		
-		
+
 		Bundle extras = getIntent().getExtras();
 
 		// check from the saved Instance
@@ -97,17 +96,6 @@ public class TrackEditDetailActivity extends Activity {
         }
       }
       
-      String nbCoordonates = cursor.getString(cursor
-           .getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS));
-
-            for (int j = 0; j < mNbCoords.getCount(); j++) {
-
-              String str = (String) mNbCoords.getItemAtPosition(j);
-              if (str.equalsIgnoreCase(nbCoordonates)) {
-                mNbCoords.setSelection(j);
-              }
-      }
-      
       mTitleText.setText(cursor.getString(cursor
           .getColumnIndexOrThrow(TrackTable.COLUMN_TITLE)));
       
@@ -144,16 +132,20 @@ public class TrackEditDetailActivity extends Activity {
 	private void saveState(){};
 
 	private void saveData() {
-		String difficulty = (String) mDifficulty.getSelectedItem();
-		String nbcoords = (String) mNbCoords.getSelectedItem();
 		String title = mTitleText.getText().toString();
 		String summary = mSummaryText.getText().toString();
 		String duration = mDuration.getText().toString();
+		String difficulty = (String) mDifficulty.getSelectedItem();
+		String coords = mPos.getText().toString();
+		int index = 0;
+		int nbcoords = -1;
+		while (index != -1)
+		{
+			index = coords.indexOf(")", index +1);
+			nbcoords++;
+		}
 		String startX =  mPos.getText().toString();
 		String startY =  mPos.getText().toString();
-		String rep = "0;0";
-		String score = Integer.toString( mDifficulty.getSelectedItemPosition() * Integer.valueOf(mDuration.getText().toString()) / 60 );
-		String pics = "picture_path";
 		
 		int indexX = startX.indexOf(";");
 		Toast.makeText(TrackEditDetailActivity.this, "indexX : " + indexX,
@@ -179,9 +171,10 @@ public class TrackEditDetailActivity extends Activity {
 		Toast.makeText(TrackEditDetailActivity.this, "StartY : " + startY,
 				Toast.LENGTH_LONG).show();
 		
-		String coords = mPos.getText().toString();
 		String flags = mVis.getText().toString();
-
+		String rep = "0;0";
+		String score = Integer.toString( mDifficulty.getSelectedItemPosition() * Integer.valueOf(mDuration.getText().toString()) / 60 );
+		String pics = "picture_path";
 		
 		// only save if either summary or description
 		// is available
