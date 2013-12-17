@@ -1,15 +1,9 @@
 package fr.eurecom.hikingit;
 
-import java.lang.reflect.Array;
 import java.util.Vector;
-
 import android.app.Dialog;
-import android.app.LoaderManager;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
-import android.content.Loader;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,19 +39,24 @@ public class DisplayMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
 		OnMarkerClickListener {
 
-	private double nonRefreshArea[] = {0,0,0,0};
-	private double longitude;
-	private double latitude;
-
 	private double marginRefresh = 10;
 	private double margin = 5;
-	
+
+	private LocationManager locationManager;
+	private String provider;
+	private Location location;
+	private double nonRefreshArea[] = { 0, 0, 0, 0 };
+	private double longitude;
+	private double latitude;
+	private Marker myMarker;
+
 	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
-	Vector<LatLng> vectorLoc = new Vector<LatLng>();
-	Vector<LatLng> markerTrack = new Vector<LatLng>();
-	
+	// Vector<LatLng> vectorLoc = new Vector<LatLng>();
+	// Vector<LatLng> markerTrack = new Vector<LatLng>();
+	// Vector<Integer> idTrack = new Vector<Integer>();
+
 	GoogleMap googleMap;
-	
+
 	Vector<Vector<Polyline>> polyline = new Vector<Vector<Polyline>>();
 	PolylineOptions rectOptions;
 
@@ -67,15 +65,13 @@ public class DisplayMapActivity extends FragmentActivity implements
 			0xFF669900, 0xFF99CC00, 0xFFFF8800, 0xFFBB33, 0xFFCC0000,
 			0xFFFF4444 };
 
-
 	TextView tvLocInfo;
 	boolean markerClicked = true;
-	boolean ButtonEnableMarkClicked = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.display_map);
 
 		tvLocInfo = (TextView) findViewById(R.id.tv_location);
 
@@ -106,16 +102,16 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 			// Getting LocationManager object from System Service
 			// LOCATION_SERVICE
-			LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+			locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			// Creating a criteria object to retrieve provider
 			Criteria criteria = new Criteria();
 
 			// Getting the name of the best provider
-			String provider = locationManager.getBestProvider(criteria, true);
+			provider = locationManager.getBestProvider(criteria, true);
 
 			// Getting Current Location
-			Location location = locationManager.getLastKnownLocation(provider);
+			location = locationManager.getLastKnownLocation(provider);
 
 			if (location != null) {
 				latitude = location.getLatitude();
@@ -129,28 +125,37 @@ public class DisplayMapActivity extends FragmentActivity implements
 				googleMap.setOnMapLongClickListener(this);
 				googleMap.setOnMarkerClickListener(this);
 
-				drawMarker(location);
+				myMarker = googleMap
+						.addMarker(new MarkerOptions()
+								.position(new LatLng(latitude, longitude))
+								.snippet(
+										"Lat:" + location.getLatitude()
+												+ "Lng:"
+												+ location.getLongitude())
+								.icon(BitmapDescriptorFactory
+										.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+								.title("ME"));
 
 				LocationListener locationListener = new LocationListener() {
 
 					public void onLocationChanged(Location location) {
-						Log.w("fr.eurecom.hikingit"," onLocationChanged");
-						drawMarker(location);
-						Log.w("fr.eurecom.hikingit","my position pinned");
+						Log.w("fr.eurecom.hikingit", " onLocationChanged");
+						drawMarker();
+						Log.w("fr.eurecom.hikingit", "my position pinned");
 						// redraw the marker when get location update.
 						if (location.getLatitude() > nonRefreshArea[0]
 								|| location.getLatitude() < nonRefreshArea[1]
 								|| location.getLongitude() > nonRefreshArea[2]
 								|| location.getLongitude() < nonRefreshArea[3]) {
-							
+
 							latitude = location.getLatitude();
 							longitude = location.getLongitude();
-							
+
 							nonRefreshArea[0] = latitude - marginRefresh;
 							nonRefreshArea[1] = latitude + marginRefresh;
 							nonRefreshArea[2] = longitude - marginRefresh;
 							nonRefreshArea[3] = longitude + marginRefresh;
-							
+
 							fillData();
 						}
 					}
@@ -175,12 +180,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 					}
 				};
 
-				if (location != null) {
-					// PLACE THE INITIAL MARKER
-					drawMarker(location);
-				}
-
-				locationManager.requestLocationUpdates(provider, 10000, 0,
+				Log.w("fr.eurecom.hikingit", " first locUp 20000");
+				locationManager.requestLocationUpdates(provider, 20000, 0,
 						locationListener);
 			} else {
 				Toast.makeText(getApplicationContext(), "No location",
@@ -190,71 +191,57 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 	}
 
-	
 	@Override
 	public void onLocationChanged(Location location) {
 		// redraw the marker when get location update.
-		Log.w("fr.eurecom.hikingit"," onLocationChanged override");
+		Log.w("fr.eurecom.hikingit", " onLocationChanged override");
 		if (location.getLatitude() < nonRefreshArea[0]
 				|| location.getLatitude() > nonRefreshArea[1]
 				|| location.getLongitude() < nonRefreshArea[2]
 				|| location.getLongitude() > nonRefreshArea[3]) {
-			
+
 			latitude = location.getLatitude();
-			Log.w("fr.eurecom.hikingit", "lat "+ latitude);
+			Log.w("fr.eurecom.hikingit", "lat " + latitude);
 			longitude = location.getLongitude();
-			Log.w("fr.eurecom.hikingit", "long "+ longitude);
-			
+			Log.w("fr.eurecom.hikingit", "long " + longitude);
+
 			nonRefreshArea[0] = latitude - marginRefresh;
 			nonRefreshArea[1] = latitude + marginRefresh;
 			nonRefreshArea[2] = longitude - marginRefresh;
 			nonRefreshArea[3] = longitude + marginRefresh;
-			
+			googleMap.clear();
 			fillData();
 		}
-		drawMarker(location);
+		drawMarker();
 	}
-	
+
 	@Override
 	public void onMapClick(LatLng point) {
 
 		tvLocInfo.setText(point.toString());
 		googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
 		markerClicked = false;
-	}/*
-	
-	public void myClickHandler(View target) {
-		Button buttonAddTrack = (Button) findViewById(R.id.b_addmark);
+	}
 
-		if (target.getId() == R.id.b_addmark) {
-			if (ButtonEnableMarkClicked == false) {
-				ButtonEnableMarkClicked = true;
-				buttonAddTrack.setText("Stop Track");
-			} else {
-				ButtonEnableMarkClicked = false;
-				buttonAddTrack.setText("Add Mark");
-			}
+	public void myClickHandler(View target) {
+		if (target.getId() == R.id.b_updateLoc) {
+			Log.w("fr.eurecom.hikingit", "updateLoc");
+			//onLocationChanged( location);
 		}
 	}
 
-	*/
 	public void onMapLongClick(LatLng point) {
-		if (!ButtonEnableMarkClicked)
-			return;
-		vectorLoc.add(point);
-		tvLocInfo.setText("New marker added@" + point.toString());
-		googleMap.addMarker(new MarkerOptions().position(point).title(
-				point.toString()));
-
-		markerClicked = false;
 	}
-	
 
-	private void drawMarker(Location location) {
-		googleMap.clear();
+	private void drawMarker() {
+		Log.w("fr.eurecom.hikingit", "draw marker called");
+		Log.w("fr.eurecom.hikingit", "draw marker first loc "
+				+ myMarker.getPosition().toString());
+		myMarker.remove();
+		Log.w("fr.eurecom.hikingit", "myMarker removed");
 		LatLng currentPosition = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		googleMap.addMarker(new MarkerOptions()
+		myMarker = googleMap.addMarker(new MarkerOptions()
 				.position(currentPosition)
 				.snippet(
 						"Lat:" + location.getLatitude() + "Lng:"
@@ -262,6 +249,9 @@ public class DisplayMapActivity extends FragmentActivity implements
 				.icon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
 				.title("ME"));
+		Log.w("fr.eurecom.hikingit", "draw marker second loc "
+				+ myMarker.getPosition().toString());
+		Log.w("fr.eurecom.hikingit", "myMarker added");
 	}
 
 	@Override
@@ -289,29 +279,43 @@ public class DisplayMapActivity extends FragmentActivity implements
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		// TODO Auto-generated method stub
-		return false;
+		Log.w("fr.eurecom.hikingit",
+				"appel onMarkerClick marker = " + marker.toString());
+		// Log.w("fr.eurecom.hikngit","idTracker :" + idTrack.toString());
+		Log.w("fr.eurecom.hikingit", "snipset " + marker.getSnippet());
+		String idMark = marker.getSnippet();
+		Log.w("fr.eurecom.hikingit",
+				"id " + idMark + " " + idMark.subSequence(0, 1));
+		int test = idMark.subSequence(0, 1).toString().compareTo("L");
+		if (test != 0) {
+			Intent i = new Intent(this, TrackDetailActivity.class);
+			Uri trackUri = Uri.parse(TrackContentProvider.CONTENT_URI + "/"
+					+ idMark);
+			Log.w("fr.eurecom.hikingit", "trackuri : " + trackUri);
+			i.putExtra(TrackContentProvider.CONTENT_ITEM_TYPE, trackUri);
+			startActivity(i);
+			return true;
+		} else {
+			Toast.makeText(getApplicationContext(), "Press a track",
+					Toast.LENGTH_LONG).show();
+			return false;
+		}
 	}
 
 	private void fillData() {
-		
-		if (polyline!=null && !polyline.isEmpty())
-		{
+
+		if (polyline != null && !polyline.isEmpty()) {
 			polyline.clear();
-			Log.w("fr.eurecom.hikingit", "polyline cleared "+ polyline.toString());
+			Log.w("fr.eurecom.hikingit",
+					"polyline cleared " + polyline.toString());
 		}
-		if (markerTrack!= null && !markerTrack.isEmpty())
-		{
-			markerTrack.clear();
-			Log.w("fr.eurecom.hikingit", "markerTrack cleared "+ markerTrack.toString());
-		}
-		if (listVect!= null && !listVect.isEmpty())
-		{
+		if (listVect != null && !listVect.isEmpty()) {
 			listVect.clear();
-			Log.w("fr.eurecom.hikingit", "listVect cleared "+ listVect.toString());
+			Log.w("fr.eurecom.hikingit",
+					"listVect cleared " + listVect.toString());
 		}
-		
-		
-		String[] projection = { TrackTable.COLUMN_TITLE,
+
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
 				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
 				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
@@ -331,11 +335,11 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 		double limitMaxY = longitude + margin;
 		String lgtdMax = String.valueOf(limitMaxY);
-		Log.w("fr.eurecom.fr","longitude max : " + lgtdMax);
+		Log.w("fr.eurecom.fr", "longitude max : " + lgtdMax);
 
 		double limitMinY = longitude - margin;
 		String lgtdMin = String.valueOf(limitMinY);
-		Log.w("fr.eurecom.fr","longitude min : " + lgtdMin);
+		Log.w("fr.eurecom.fr", "longitude min : " + lgtdMin);
 
 		String[] selectionArgs = { "1", lttdMax, lttdMin, lgtdMax, lgtdMin };
 		String order = "";
@@ -347,9 +351,19 @@ public class DisplayMapActivity extends FragmentActivity implements
 			Log.w("fr.eurecom.fr", "cursor " + cursor.toString());
 			Log.w("fr.eurecom.fr", "cursor nb rows " + cursor.getCount());
 			for (int i = cursor.getPosition(); i < cursor.getCount(); i++) {
-				Log.w("fr.eurecom.fr", "cursor position" + cursor.getPosition() + "sur" + Integer.toString(cursor.getCount()-1));
+				Log.w("fr.eurecom.fr", "cursor position" + cursor.getPosition()
+						+ "sur" + Integer.toString(cursor.getCount() - 1));
 				int index = 0;
 				int index2 = 0;
+
+				int id = Integer.valueOf(cursor.getString(cursor
+						.getColumnIndexOrThrow(TrackTable.COLUMN_ID)));
+				Log.w("fr.eurecom.fr", "track id " + id);
+				// idTrack.add(id);
+
+				String titleTrack = cursor.getString(cursor
+						.getColumnIndexOrThrow(TrackTable.COLUMN_TITLE));
+				Log.w("fr.eurecom.fr", titleTrack);
 
 				int NbCoords = Integer.valueOf(cursor.getString(cursor
 						.getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS)));
@@ -392,17 +406,26 @@ public class DisplayMapActivity extends FragmentActivity implements
 					Log.w("fr.eurecom.fr", "latlong : " + latlong.toString());
 					listVect.get(i).add(latlong);
 
+					if (j == 0) {
+						Log.w("fr.eurecom.hikingit", j + " marker numero " + i);
+						googleMap.addMarker(new MarkerOptions()
+								.position(latlong).title(titleTrack)
+								.snippet(Integer.toString(id)));
+						Log.w("fr.eurecom.hikingit", "marker ajoute");
+					}
+
 				}
+				Log.w("fr.eurecom.hikingit", " appel drawline pour " + i);
+				drawLine(i);
 				Log.w("fr.eurecom.fr", "vector : " + listVect.get(i).toString());
 				if (i < cursor.getCount() - 1) {
 					cursor.moveToNext();
 				}
 			}
-
 			// always close the cursor
 			Log.w("fr.eurecom.fr", "vector of vectors : " + listVect.toString());
 			cursor.close();
-			addMarkers();
+			// addTracks();
 		} else {
 			Log.w("fr.eurecom.fr", "no cursor");
 			Toast.makeText(DisplayMapActivity.this, "No cursor",
@@ -410,23 +433,20 @@ public class DisplayMapActivity extends FragmentActivity implements
 		}
 	}
 
-	// set an idea on the marker
-	// onclick marker => intent
-	public void addMarkers() {
-		Log.w("fr.eurecom.fr", "liste de " + listVect.size() + " track");
-		for (int m = 0; m < listVect.size(); m++) {
-			Log.w("fr.eurecom.fr",
-					"track " + m + " sur "
-							+ Integer.toString(listVect.size() - 1));
-			LatLng point = listVect.get(m).get(0);
-			Log.w("fr.eurecom.fr", "marker en " + point.toString());
-			googleMap.addMarker(new MarkerOptions().position(point).title(
-					point.toString()));
-			markerTrack.add(listVect.get(m).get(0));
-			drawLine(m);
-		}
-		Log.w("fr.eurecom.hikingit", "markerTrack created "+ markerTrack.toString());
-	}
+	/*
+	 * public void addTracks( ) { Log.w("fr.eurecom.fr", "liste de " +
+	 * listVect.size() + " track"); for (int m = 0; m < listVect.size(); m++) {
+	 * Log.w("fr.eurecom.fr", "track " + m + " sur " +
+	 * Integer.toString(listVect.size() - 1)); LatLng point =
+	 * listVect.get(m).get(0); Log.w("fr.eurecom.fr", "marker en " +
+	 * point.toString()); Marker marker = googleMap.addMarker(new
+	 * MarkerOptions().position(point).title(
+	 * point.toString()).snippet(idTrack.get(m).toString()));
+	 * Log.w("fr.eurecom.fr", "id "+ marker.getSnippet());
+	 * markerTrack.add(listVect.get(m).get(0)); drawLine(m); }
+	 * Log.w("fr.eurecom.hikingit", "markerTrack created "+
+	 * markerTrack.toString()); }
+	 */
 
 	public void drawLine(int a) {
 		Log.w("fr.eurecom.fr", "drawline, vecteur de taille  "
@@ -437,14 +457,13 @@ public class DisplayMapActivity extends FragmentActivity implements
 			Vector<Polyline> vect = new Vector<Polyline>();
 			polyline.addElement(vect);
 			int colorThread = colors[2 * a % colors.length];
-			Log.w("fr.eurecom.fr", "drawline, couleur  "
-					+ colorThread);
+			Log.w("fr.eurecom.fr", "drawline, couleur  " + colorThread);
 
 			for (int m = 0; m < listVect.get(a).size() - 1; m++) {
-				
+
 				LatLng Location1 = listVect.get(a).get(m);
-				LatLng Location2 = listVect.get(a).get(m+1);
-				
+				LatLng Location2 = listVect.get(a).get(m + 1);
+
 				Log.w("fr.eurecom.fr",
 						"draw line point " + m + Integer.toString(m + 1));
 				Log.w("fr.eurecom.fr",
@@ -454,7 +473,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 						.add(Location1, Location2).width(3).color(colorThread);
 				polyline.lastElement().add(googleMap.addPolyline(line));
 			}
-			Log.w("fr.eurecom.hikingit", "polyline created "+ polyline.toString());
+			Log.w("fr.eurecom.hikingit",
+					"polyline created " + polyline.toString());
 		}
 	}
 
