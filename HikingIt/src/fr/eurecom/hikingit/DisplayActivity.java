@@ -1,5 +1,6 @@
 package fr.eurecom.hikingit;
 
+import fr.eurecom.hikingit.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;

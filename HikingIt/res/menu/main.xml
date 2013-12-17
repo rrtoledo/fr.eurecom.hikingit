@@ -1,9 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+     <item 
+        android:id="@+id/item1"
+         android:title="Edit Track"
+         android:icon="@drawable/track"
+         android:showAsAction="ifRoom|withText"/>
+    
+    <item 
+        android:id="@+id/item2"
+         android:title="Clear map"
+         android:icon="@drawable/clear_all"
+         android:showAsAction="ifRoom|withText"/>
+    
+    <item 
+        android:id="@+id/item3"
+         android:title="Save" 
+         android:showAsAction="ifRoom|withText"/>
 
 </menu>

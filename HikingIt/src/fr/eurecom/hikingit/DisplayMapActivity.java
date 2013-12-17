@@ -3,6 +3,7 @@ package fr.eurecom.hikingit;
 import java.lang.reflect.Array;
 import java.util.Vector;
 
+import fr.eurecom.hikingit.R;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -46,27 +47,31 @@ public class DisplayMapActivity extends FragmentActivity implements
 		LocationListener, OnMapClickListener, OnMapLongClickListener,
 		OnMarkerClickListener {
 
+	private double nonRefreshArea[] = {0,0,0,0};
 	private double longitude;
 	private double latitude;
 
 	private double marginRefresh = 10;
 	private double margin = 5;
+	
+	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
+	Vector<LatLng> vectorLoc = new Vector<LatLng>();
+	Vector<LatLng> markerTrack = new Vector<LatLng>();
+	
+	GoogleMap googleMap;
+	
+	Vector<Vector<Polyline>> polyline = new Vector<Vector<Polyline>>();
+	PolylineOptions rectOptions;
 
 	// blue, purple, green, orange, red - first marker - second thread
 	int[] colors = { 0xFF0099CC, 0xFF33B5E5, 0xFF9933CC, 0xFFAA66CC,
 			0xFF669900, 0xFF99CC00, 0xFFFF8800, 0xFFBB33, 0xFFCC0000,
 			0xFFFF4444 };
 
-	GoogleMap googleMap;
+
 	TextView tvLocInfo;
-	boolean markerClicked = false;
-	Polyline polyline;
-	PolylineOptions rectOptions;
-
-	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
-	Vector<LatLng> vectorLoc = new Vector<LatLng>();
-
-	boolean ButtonEnableMarkClicked = false;
+	boolean markerClicked = true;
+	boolean ButtonEnableMarkClicked = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +121,10 @@ public class DisplayMapActivity extends FragmentActivity implements
 			if (location != null) {
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
-				fillData();
+				nonRefreshArea[0] = latitude - marginRefresh;
+				nonRefreshArea[1] = latitude + marginRefresh;
+				nonRefreshArea[2] = longitude - marginRefresh;
+				nonRefreshArea[3] = longitude + marginRefresh;
 
 				googleMap.setOnMapClickListener(this);
 				googleMap.setOnMapLongClickListener(this);
@@ -127,16 +135,25 @@ public class DisplayMapActivity extends FragmentActivity implements
 				LocationListener locationListener = new LocationListener() {
 
 					public void onLocationChanged(Location location) {
+						Log.w("fr.eurecom.hikingit"," onLocationChanged");
+						drawMarker(location);
+						Log.w("fr.eurecom.hikingit","my position pinned");
 						// redraw the marker when get location update.
-						if (location.getLatitude() > (latitude + marginRefresh)
-								|| location.getLatitude() < (latitude - marginRefresh)
-								|| location.getLongitude() > (longitude + marginRefresh)
-								|| location.getLongitude() < (longitude - marginRefresh)) {
+						if (location.getLatitude() > nonRefreshArea[0]
+								|| location.getLatitude() < nonRefreshArea[1]
+								|| location.getLongitude() > nonRefreshArea[2]
+								|| location.getLongitude() < nonRefreshArea[3]) {
+							
 							latitude = location.getLatitude();
 							longitude = location.getLongitude();
+							
+							nonRefreshArea[0] = latitude - marginRefresh;
+							nonRefreshArea[1] = latitude + marginRefresh;
+							nonRefreshArea[2] = longitude - marginRefresh;
+							nonRefreshArea[3] = longitude + marginRefresh;
+							
 							fillData();
 						}
-						drawMarker(location);
 					}
 
 					@Override
@@ -164,7 +181,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 					drawMarker(location);
 				}
 
-				locationManager.requestLocationUpdates(provider, 3000, 0,
+				locationManager.requestLocationUpdates(provider, 10000, 0,
 						locationListener);
 			} else {
 				Toast.makeText(getApplicationContext(), "No location",
@@ -174,14 +191,39 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 	}
 
+	
+	@Override
+	public void onLocationChanged(Location location) {
+		// redraw the marker when get location update.
+		Log.w("fr.eurecom.hikingit"," onLocationChanged override");
+		if (location.getLatitude() < nonRefreshArea[0]
+				|| location.getLatitude() > nonRefreshArea[1]
+				|| location.getLongitude() < nonRefreshArea[2]
+				|| location.getLongitude() > nonRefreshArea[3]) {
+			
+			latitude = location.getLatitude();
+			Log.w("fr.eurecom.hikingit", "lat "+ latitude);
+			longitude = location.getLongitude();
+			Log.w("fr.eurecom.hikingit", "long "+ longitude);
+			
+			nonRefreshArea[0] = latitude - marginRefresh;
+			nonRefreshArea[1] = latitude + marginRefresh;
+			nonRefreshArea[2] = longitude - marginRefresh;
+			nonRefreshArea[3] = longitude + marginRefresh;
+			
+			fillData();
+		}
+		drawMarker(location);
+	}
+	
 	@Override
 	public void onMapClick(LatLng point) {
 
 		tvLocInfo.setText(point.toString());
 		googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
 		markerClicked = false;
-	}
-
+	}/*
+	
 	public void myClickHandler(View target) {
 		Button buttonAddTrack = (Button) findViewById(R.id.b_addmark);
 
@@ -196,6 +238,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 		}
 	}
 
+	*/
 	public void onMapLongClick(LatLng point) {
 		if (!ButtonEnableMarkClicked)
 			return;
@@ -206,23 +249,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 		markerClicked = false;
 	}
-
-	/*
-	 * public boolean onMarkerClick(Marker marker) {
-	 * 
-	 * if(markerClicked){
-	 * 
-	 * if(polyline != null){ polyline.remove(); polyline = null; }
-	 * 
-	 * rectOptions.add(marker.getPosition()); rectOptions.color(Color.RED);
-	 * polyline =googleMap.addPolyline(rectOptions); }else{ if(polyline !=
-	 * null){ polyline.remove(); polyline = null; }
-	 * 
-	 * rectOptions = new PolylineOptions().add(marker.getPosition());
-	 * markerClicked = true; }
-	 * 
-	 * return true; }
-	 */
+	
 
 	private void drawMarker(Location location) {
 		googleMap.clear();
@@ -236,44 +263,6 @@ public class DisplayMapActivity extends FragmentActivity implements
 				.icon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
 				.title("ME"));
-	}
-
-	private void drawOtherMarkers() {
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-
-		TextView tvLocation = (TextView) findViewById(R.id.tv_location);
-
-		// Getting latitude of the current location
-		double latitude = location.getLatitude();
-
-		// Getting longitude of the current location
-		double longitude = location.getLongitude();
-
-		// Creating a LatLng object for the current location
-		LatLng latLng = new LatLng(latitude, longitude);
-
-		// Showing the current location in Google Map
-		googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
-		// Zoom in the Google Map
-		googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-		// Setting latitude and longitude in the TextView tv_location
-		tvLocation.setText("Latitude:" + latitude + ", Longitude:" + longitude);
-
-		if (location.getLatitude() > (latitude + marginRefresh)
-				|| location.getLatitude() < (latitude - marginRefresh)
-				|| location.getLongitude() > (longitude + marginRefresh)
-				|| location.getLongitude() < (longitude - marginRefresh)) {
-			latitude = location.getLatitude();
-			longitude = location.getLongitude();
-			fillData();
-		}
-		drawMarker(location);
-
 	}
 
 	@Override
@@ -291,12 +280,12 @@ public class DisplayMapActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 	}
 
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	}
+	}*/
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
@@ -305,6 +294,24 @@ public class DisplayMapActivity extends FragmentActivity implements
 	}
 
 	private void fillData() {
+		
+		if (polyline!=null && !polyline.isEmpty())
+		{
+			polyline.clear();
+			Log.w("fr.eurecom.hikingit", "polyline cleared "+ polyline.toString());
+		}
+		if (markerTrack!= null && !markerTrack.isEmpty())
+		{
+			markerTrack.clear();
+			Log.w("fr.eurecom.hikingit", "markerTrack cleared "+ markerTrack.toString());
+		}
+		if (listVect!= null && !listVect.isEmpty())
+		{
+			listVect.clear();
+			Log.w("fr.eurecom.hikingit", "listVect cleared "+ listVect.toString());
+		}
+		
+		
 		String[] projection = { TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
 				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
@@ -317,23 +324,19 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 		double limitMaxX = latitude + margin;
 		String lttdMax = String.valueOf(limitMaxX);
-		Toast.makeText(DisplayMapActivity.this, "latitude max : " + lttdMax,
-				Toast.LENGTH_LONG).show();
+		Log.w("fr.eurecom.fr", "latitude max : " + lttdMax);
 
 		double limitMinX = latitude - margin;
 		String lttdMin = String.valueOf(limitMinX);
-		Toast.makeText(DisplayMapActivity.this, "latitude min : " + lttdMin,
-				Toast.LENGTH_LONG).show();
+		Log.w("fr.eurecom.fr", "latitude min : " + lttdMin);
 
 		double limitMaxY = longitude + margin;
 		String lgtdMax = String.valueOf(limitMaxY);
-		Toast.makeText(DisplayMapActivity.this, "longitude max : " + lgtdMax,
-				Toast.LENGTH_LONG).show();
+		Log.w("fr.eurecom.fr","longitude max : " + lgtdMax);
 
 		double limitMinY = longitude - margin;
 		String lgtdMin = String.valueOf(limitMinY);
-		Toast.makeText(DisplayMapActivity.this, "longitude min : " + lgtdMin,
-				Toast.LENGTH_LONG).show();
+		Log.w("fr.eurecom.fr","longitude min : " + lgtdMin);
 
 		String[] selectionArgs = { "1", lttdMax, lttdMin, lgtdMax, lgtdMin };
 		String order = "";
@@ -345,6 +348,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 			Log.w("fr.eurecom.fr", "cursor " + cursor.toString());
 			Log.w("fr.eurecom.fr", "cursor nb rows " + cursor.getCount());
 			for (int i = cursor.getPosition(); i < cursor.getCount(); i++) {
+				Log.w("fr.eurecom.fr", "cursor position" + cursor.getPosition() + "sur" + Integer.toString(cursor.getCount()-1));
 				int index = 0;
 				int index2 = 0;
 
@@ -399,8 +403,9 @@ public class DisplayMapActivity extends FragmentActivity implements
 			// always close the cursor
 			Log.w("fr.eurecom.fr", "vector of vectors : " + listVect.toString());
 			cursor.close();
-			addMarkers();
+			addTracks();
 		} else {
+			Log.w("fr.eurecom.fr", "no cursor");
 			Toast.makeText(DisplayMapActivity.this, "No cursor",
 					Toast.LENGTH_LONG).show();
 		}
@@ -408,7 +413,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 	// set an idea on the marker
 	// onclick marker => intent
-	public void addMarkers() {
+	public void addTracks() {
 		Log.w("fr.eurecom.fr", "liste de " + listVect.size() + " track");
 		for (int m = 0; m < listVect.size(); m++) {
 			Log.w("fr.eurecom.fr",
@@ -417,9 +422,12 @@ public class DisplayMapActivity extends FragmentActivity implements
 			LatLng point = listVect.get(m).get(0);
 			Log.w("fr.eurecom.fr", "marker en " + point.toString());
 			googleMap.addMarker(new MarkerOptions().position(point).title(
-					point.toString()));
+					point.toString()).icon(BitmapDescriptorFactory.fromResource(R.drawable.hiking2)));
+			markerTrack.add(listVect.get(m).get(0));
 			drawLine(m);
+			
 		}
+		Log.w("fr.eurecom.hikingit", "markerTrack created "+ markerTrack.toString());
 	}
 
 	public void drawLine(int a) {
@@ -428,8 +436,11 @@ public class DisplayMapActivity extends FragmentActivity implements
 		if (listVect.get(a).size() < 2)
 			return;
 		else {
-
+			Vector<Polyline> vect = new Vector<Polyline>();
+			polyline.addElement(vect);
 			int colorThread = colors[2 * a % colors.length];
+			Log.w("fr.eurecom.fr", "drawline, couleur  "
+					+ colorThread);
 
 			for (int m = 0; m < listVect.get(a).size() - 1; m++) {
 				
@@ -443,9 +454,9 @@ public class DisplayMapActivity extends FragmentActivity implements
 								+ Location2.toString());
 				PolylineOptions line = new PolylineOptions()
 						.add(Location1, Location2).width(3).color(colorThread);
-
-				googleMap.addPolyline(line);
+				polyline.lastElement().add(googleMap.addPolyline(line));
 			}
+			Log.w("fr.eurecom.hikingit", "polyline created "+ polyline.toString());
 		}
 	}
 
