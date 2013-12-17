@@ -3,8 +3,14 @@ package fr.eurecom.hikingit;
 import java.util.Vector;
 import java.util.ArrayList;
 
+
+
+import fr.eurecom.hikingit.R;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,12 +21,18 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
+
+
+
+
 
 
 
@@ -46,7 +58,6 @@ public class TrackEditMapActivity extends FragmentActivity implements
 
 
 	GoogleMap googleMap;
-	TextView tvLocInfo;
 	boolean markerClicked = false;
 	Polyline polyline;
 	PolylineOptions rectOptions;
@@ -55,13 +66,12 @@ public class TrackEditMapActivity extends FragmentActivity implements
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	ArrayList<Polyline> polylines = new ArrayList<Polyline>();
 	int i = 0;
+	public Location location;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		tvLocInfo = (TextView) findViewById(R.id.tv_location);
 
 		// Getting Google Play availability status
 		int status = GooglePlayServicesUtil
@@ -98,7 +108,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			String provider = locationManager.getBestProvider(criteria, true);
 
 			// Getting Current Location
-			Location location = locationManager.getLastKnownLocation(provider);
+			location = locationManager.getLastKnownLocation(provider);
 
 			googleMap.setOnMapClickListener(this);
 			googleMap.setOnMapLongClickListener(this);
@@ -206,13 +216,88 @@ public class TrackEditMapActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapClick(LatLng point) {
-
-		tvLocInfo.setText(point.toString());
 		googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
 		markerClicked = false;
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
 
-	public void myClickHandler(View target) {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item1:
+			
+			if (ButtonEnableMarkClicked == false) {
+				ButtonEnableMarkClicked = true;
+				Toast.makeText(getApplicationContext(), "Edit Map",
+						Toast.LENGTH_SHORT).show();
+				item.setIcon(R.drawable.tick);
+			if (markers.size() != 0) {
+				for (i = 0; i <= markers.size() - 1; i++) {
+					markers.get(i).setVisible(true);
+					markers.get(i)
+							.setIcon(
+									BitmapDescriptorFactory
+											.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+					markers.get(i).setDraggable(true);
+				}
+				} 
+			}else {
+				item.setIcon(R.drawable.track);
+				Toast.makeText(getApplicationContext(), "Done",
+						Toast.LENGTH_SHORT).show();
+				if (markers.size() > 0) {
+
+					markers.get(0)
+							.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.startline));
+					markers.get(0).setTitle("START");
+
+					if (markers.size() > 1) {
+						markers.get(markers.size() - 1)
+								.setIcon(
+										BitmapDescriptorFactory.fromResource(R.drawable.finish_flag));
+						markers.get(markers.size() - 1).setTitle("END");
+
+						for (i = 1; i < markers.size() - 1; i++) {
+							markers.get(i).setVisible(false);
+						}
+						for (i = 0; i <= markers.size() - 1; i++) {
+							markers.get(i).setDraggable(false);
+						}
+					}
+
+				}
+
+				ButtonEnableMarkClicked = false;
+			}
+			return true;
+		case R.id.item2:
+			
+			Toast.makeText(getApplicationContext(), "Clear map",
+					Toast.LENGTH_SHORT).show();
+			openDialog(null);
+
+			return true;
+			
+		case R.id.item3:
+			Toast.makeText(getApplicationContext(), "Save",
+					Toast.LENGTH_SHORT).show();
+
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	
+	/*public void myClickHandler(View target) {
 		Button buttonAddTrack = (Button) findViewById(R.id.b_addmark);
 
 		if (target.getId() == R.id.b_addmark) {
@@ -248,12 +333,17 @@ public class TrackEditMapActivity extends FragmentActivity implements
 						markers.get(markers.size() - 1).setTitle("END");
 
 						for (i = 1; i < markers.size() - 1; i++) {
-							markers.get(i).setVisible(false);
+							//markers.get(i).setVisible(false);
+							markers.get(i)
+							.setIcon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+							
 						}
 						for (i = 0; i <= markers.size() - 1; i++) {
 							markers.get(i).setDraggable(false);
 						}
 					}
+					else markers.get(0).setDraggable(false);
 
 				}
 
@@ -261,7 +351,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 				buttonAddTrack.setText("Add Mark");
 			}
 		}
-	}
+	}*/
 
 	public void myFinishedTrack(View v) {
 
@@ -431,12 +521,43 @@ public class TrackEditMapActivity extends FragmentActivity implements
 				.title("ME"));
 	}
 
+	@SuppressWarnings("deprecation")
+	public void openDialog(View v) {
+			showDialog(1);
+	}
+	
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+			case 1:
+			// Create out AlterDialog
+			Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Reset markers and lines?");
+			builder.setCancelable(true);
+			builder.setPositiveButton("I agree", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					Toast.makeText(getApplicationContext(),"Reset map",Toast.LENGTH_LONG).show();
+					googleMap.clear();
+					drawMarker(location);
+					markers.clear();
+					vectorLoc.clear();
+				}
+			});
+			
+			builder.setNegativeButton("No, nooooo", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					Toast.makeText(getApplicationContext(),"Keep my choices",Toast.LENGTH_LONG).show();
+				}
+			});
+			AlertDialog dialog = builder.create();
+			dialog.show();
+			}
+			return super.onCreateDialog(id);
+			}
 	
 
 	@Override
 	public void onLocationChanged(Location location) {
 
-		TextView tvLocation = (TextView) findViewById(R.id.tv_location);
 
 		// Getting latitude of the current location
 		double latitude = location.getLatitude();
@@ -454,7 +575,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
 		// Setting latitude and longitude in the TextView tv_location
-		tvLocation.setText("Latitude:" + latitude + ", Longitude:" + longitude);
+		//tvLocation.setText("Latitude:" + latitude + ", Longitude:" + longitude);
 
 	}
 
@@ -473,12 +594,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+	
 
 
 	@Override
