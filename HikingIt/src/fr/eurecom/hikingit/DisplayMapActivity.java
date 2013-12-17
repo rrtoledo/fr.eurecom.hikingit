@@ -44,7 +44,6 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 	private LocationManager locationManager;
 	private String provider;
-	private Location location;
 	private double nonRefreshArea[] = { 0, 0, 0, 0 };
 	private double longitude;
 	private double latitude;
@@ -111,7 +110,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 			provider = locationManager.getBestProvider(criteria, true);
 
 			// Getting Current Location
-			location = locationManager.getLastKnownLocation(provider);
+			Location location = locationManager.getLastKnownLocation(provider);
 
 			if (location != null) {
 				latitude = location.getLatitude();
@@ -140,7 +139,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 
 					public void onLocationChanged(Location location) {
 						Log.w("fr.eurecom.hikingit", " onLocationChanged");
-						drawMarker();
+
 						Log.w("fr.eurecom.hikingit", "my position pinned");
 						// redraw the marker when get location update.
 						if (location.getLatitude() > nonRefreshArea[0]
@@ -155,9 +154,10 @@ public class DisplayMapActivity extends FragmentActivity implements
 							nonRefreshArea[1] = latitude + marginRefresh;
 							nonRefreshArea[2] = longitude - marginRefresh;
 							nonRefreshArea[3] = longitude + marginRefresh;
-
+							googleMap.clear();
 							fillData();
 						}
+						drawMarker(location);
 					}
 
 					@Override
@@ -212,7 +212,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 			googleMap.clear();
 			fillData();
 		}
-		drawMarker();
+		drawMarker(location);
 	}
 
 	@Override
@@ -233,19 +233,19 @@ public class DisplayMapActivity extends FragmentActivity implements
 	public void onMapLongClick(LatLng point) {
 	}
 
-	private void drawMarker() {
+	private void drawMarker(Location loc) {
 		Log.w("fr.eurecom.hikingit", "draw marker called");
 		Log.w("fr.eurecom.hikingit", "draw marker first loc "
 				+ myMarker.getPosition().toString());
 		myMarker.remove();
 		Log.w("fr.eurecom.hikingit", "myMarker removed");
-		LatLng currentPosition = new LatLng(location.getLatitude(),
-				location.getLongitude());
+		LatLng currentPosition = new LatLng(loc.getLatitude(),
+				loc.getLongitude());
 		myMarker = googleMap.addMarker(new MarkerOptions()
 				.position(currentPosition)
 				.snippet(
-						"Lat:" + location.getLatitude() + "Lng:"
-								+ location.getLongitude())
+						"Lat:" + loc.getLatitude() + "Lng:"
+								+ loc.getLongitude())
 				.icon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
 				.title("ME"));
