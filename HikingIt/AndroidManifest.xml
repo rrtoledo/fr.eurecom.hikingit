@@ -79,6 +79,10 @@
             android:name=".TrackEditDetailActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
+                <activity
+            android:name=".DisplayFragmentActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+        </activity>
 
         <provider
             android:name=".contentprovider.TrackContentProvider"

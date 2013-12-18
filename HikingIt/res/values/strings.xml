@@ -19,5 +19,7 @@
     <string name="tDuration">Duration :</string>
     <string name="track_edit_yourcoords">Your coordinates :</string>
     <string name="tPosition">Vecteur :</string>
+    <string name="dlf_s_nearme">Near</string>
+    <string name="dlf_s_all">All</string>
 
 </resources>

@@ -23,6 +23,10 @@ public class DisplayActivity extends Activity {
 		Intent i = new Intent(this, SearchTrackActivity.class);
 		startActivity(i);		
 	};
+	public void fragmentView(View v){
+		Intent i = new Intent(this, DisplayFragmentActivity.class);
+		startActivity(i);		
+	};
 	public void mapView(View v){
 		Intent i = new Intent(this, DisplayMapActivity.class);
 		startActivity(i);		
