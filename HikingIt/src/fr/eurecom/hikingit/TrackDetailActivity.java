@@ -47,6 +47,7 @@ public class TrackDetailActivity extends Activity {
 
 		// Or passed from the other activity
 		if (extras != null) {
+			Log.w("fr.eurecom.hikingit","there is extra");
 			trackUri = extras
 					.getParcelable(TrackContentProvider.CONTENT_ITEM_TYPE);
 
@@ -57,7 +58,7 @@ public class TrackDetailActivity extends Activity {
 	}
 
 	private void fillData(Uri uri) {
-		
+		Log.w("fr.eurecom.hikingit","in fill data");
 		Log.w("fr.eurecom.hikingit",
 				"track detail fill uri  : " + uri.toString());
 		
@@ -72,6 +73,7 @@ public class TrackDetailActivity extends Activity {
 				null);
 		if (cursor != null && cursor.moveToFirst()) {
 			cursor.moveToFirst();
+			Log.w("fr.eurecom.hikingit","in cursor");
 		
 			String title = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_TITLE));
@@ -88,7 +90,6 @@ public class TrackDetailActivity extends Activity {
 			String difficulty = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_DIFFICULTY));
 			mDifficulty.setText(difficulty);
-
 
 			String nbCoordonates = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS));

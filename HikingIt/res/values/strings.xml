@@ -23,18 +23,8 @@
     <string name="title_activity_account">AccountActivity</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="title_activity_my_tracks">MyTracksActivity</string>
-    <string name="db_title">title</string>
-    <string name="db_summary">summary</string>
-    <string name="db_difficulty">difficulty</string>
-    <string name="db_coords">coords</string>
-    <string name="db_startX">startX</string>
-    <string name="db_startY">startY</string>
-    <string name="db_score">score</string>
-    <string name="db_reputation">reputation</string>
-    <string name="db_pics">pics</string>
-    <string name="db_duration">0></string>
-    <string name="db_nbcoords">0></string>
-    <string name="db_flags">0></string>
-    <string name="db_counter">0</string>
+    <string name="dlf_s_nearme">Near</string>
+    <string name="dlf_s_all">All</string>
+    
 
 </resources>

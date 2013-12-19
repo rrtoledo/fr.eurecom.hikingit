@@ -104,7 +104,7 @@
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.MyTracksActivity"
+            android:name="fr.eurecom.hikingit.DisplayFragmentActivity"
             android:label="@string/title_activity_my_tracks" >
         </activity>
     </application>
