@@ -181,7 +181,7 @@ public class DisplayMapActivity extends FragmentActivity implements
 					drawMarker(location);
 				}
 
-				locationManager.requestLocationUpdates(provider, 10000, 0,
+				locationManager.requestLocationUpdates(provider, 5000, 0,
 						locationListener);
 			} else {
 				Toast.makeText(getApplicationContext(), "No location",

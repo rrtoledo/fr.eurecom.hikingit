@@ -21,7 +21,7 @@ import fr.eurecom.hikingit.R;
  */
 public class TrackEditDetailActivity extends Activity {
 	private Spinner mDifficulty;
-	private Spinner mNbCoords;
+	//private Spinner mNbCoords;
 	private EditText mTitleText;
 	private EditText mSummaryText;
 	private EditText mDuration;
@@ -36,7 +36,7 @@ public class TrackEditDetailActivity extends Activity {
 		setContentView(R.layout.track_edit);
 
 		mDifficulty = (Spinner) findViewById(R.id.difficulty);
-		mNbCoords = (Spinner) findViewById(R.id.nbCoords);
+		//mNbCoords = (Spinner) findViewById(R.id.nbCoords);
 		mTitleText = (EditText) findViewById(R.id.track_edit_title);
 		mSummaryText = (EditText) findViewById(R.id.tdSummary);
 		mDuration = (EditText) findViewById(R.id.tdDuration);
@@ -97,6 +97,7 @@ public class TrackEditDetailActivity extends Activity {
         }
       }
       
+      /*
       String nbCoordonates = cursor.getString(cursor
            .getColumnIndexOrThrow(TrackTable.COLUMN_NBCOORDS));
 
@@ -107,6 +108,7 @@ public class TrackEditDetailActivity extends Activity {
                 mNbCoords.setSelection(j);
               }
       }
+      */
       
       mTitleText.setText(cursor.getString(cursor
           .getColumnIndexOrThrow(TrackTable.COLUMN_TITLE)));
@@ -145,7 +147,7 @@ public class TrackEditDetailActivity extends Activity {
 
 	private void saveData() {
 		String difficulty = (String) mDifficulty.getSelectedItem();
-		String nbcoords = (String) mNbCoords.getSelectedItem();
+		String nbcoords = "0"; //(String) mNbCoords.getSelectedItem();
 		String title = mTitleText.getText().toString();
 		String summary = mSummaryText.getText().toString();
 		String duration = mDuration.getText().toString();

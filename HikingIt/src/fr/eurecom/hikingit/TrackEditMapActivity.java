@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 
+
 import fr.eurecom.hikingit.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -29,10 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
-
-
-
-
 
 
 
@@ -67,6 +64,10 @@ public class TrackEditMapActivity extends FragmentActivity implements
 	ArrayList<Polyline> polylines = new ArrayList<Polyline>();
 	int i = 0;
 	public Location location;
+	Marker MyMarker;
+	
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class TrackEditMapActivity extends FragmentActivity implements
 
 			// Getting LocationManager object from System Service
 			// LOCATION_SERVICE
+			
 			LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			// Creating a criteria object to retrieve provider
@@ -113,6 +115,56 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			googleMap.setOnMapClickListener(this);
 			googleMap.setOnMapLongClickListener(this);
 			googleMap.setOnMarkerClickListener(this);
+			
+			LocationListener locationListener = new LocationListener() {
+				
+				@Override
+				public void onLocationChanged(Location loc) {
+					//MyMarker.remove();
+					System.out.println("Location: " + location + " Loc : " + loc);
+					// Getting latitude of the current location
+					double latitude = loc.getLatitude();
+
+					// Getting longitude of the current location
+					double longitude = loc.getLongitude();
+
+					// Creating a LatLng object for the current location
+					LatLng latLng = new LatLng(latitude, longitude);
+
+					// Showing the current location in Google Map
+					googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+					// Zoom in the Google Map
+					googleMap.animateCamera(CameraUpdateFactory.zoomTo(8));
+					
+					if(location != loc){
+						MyMarker.remove();
+						drawMarker(loc);
+					}
+					
+				}
+				
+				@Override
+				public void onProviderDisabled(String provider) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onProviderEnabled(String provider) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onStatusChanged(String provider, int status,
+						Bundle extras) {
+					// TODO Auto-generated method stub
+
+				}
+				
+			};
+			
 
 			googleMap.setOnMarkerDragListener(new OnMarkerDragListener() {
 				int MarkerIndex;
@@ -508,10 +560,10 @@ public class TrackEditMapActivity extends FragmentActivity implements
 	}
 
 	private void drawMarker(Location location) {
-		googleMap.clear();
+		
 		LatLng currentPosition = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		googleMap.addMarker(new MarkerOptions()
+		MyMarker = googleMap.addMarker(new MarkerOptions()
 				.position(currentPosition)
 				.snippet(
 						"Lat:" + location.getLatitude() + "Lng:"
@@ -555,29 +607,9 @@ public class TrackEditMapActivity extends FragmentActivity implements
 			}
 	
 
-	@Override
-	public void onLocationChanged(Location location) {
-
-
-		// Getting latitude of the current location
-		double latitude = location.getLatitude();
-
-		// Getting longitude of the current location
-		double longitude = location.getLongitude();
-
-		// Creating a LatLng object for the current location
-		LatLng latLng = new LatLng(latitude, longitude);
-
-		// Showing the current location in Google Map
-		googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
-		// Zoom in the Google Map
-		googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-		// Setting latitude and longitude in the TextView tv_location
-		//tvLocation.setText("Latitude:" + latitude + ", Longitude:" + longitude);
-
-	}
+	
+	
+	
 
 	@Override
 	public void onProviderDisabled(String provider) {
@@ -613,6 +645,12 @@ public class TrackEditMapActivity extends FragmentActivity implements
 	public void onMarkerDragStart(Marker marker) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

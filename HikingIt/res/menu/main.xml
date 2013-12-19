@@ -16,7 +16,7 @@
     
     <item 
         android:id="@+id/item3"
-         android:title="Save" 
+         android:title="Confirm" 
          android:showAsAction="ifRoom|withText"/>
 
 </menu>

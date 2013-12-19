@@ -1,12 +1,13 @@
 package fr.eurecom.hikingit;
 
+import fr.eurecom.hikingit.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 public class TrackEditActivity extends Activity {
-
+	
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -18,7 +19,7 @@ public class TrackEditActivity extends Activity {
 		startActivity(i);		
 	};
 	public void imageView(View v){
-		Intent i = new Intent(this, TrackEditMapActivity.class);
+		Intent i = new Intent(this, CreateFragmentActivity.class);
 		startActivity(i);		
 	};
 
