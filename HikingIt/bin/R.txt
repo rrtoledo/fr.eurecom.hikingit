@@ -1,4 +1,5 @@
 int array difficulties 0x7f080001
+int array display 0x7f080002
 int array nbCoords 0x7f080000
 int attr adSize 0x7f010000
 int attr adUnitId 0x7f010001

@@ -160,7 +160,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			};
 
 			Log.w("fr.eurecom.hikingit", "MapFragment first lookUp 20000");
-			locationManager.requestLocationUpdates(provider, 60000, 0,
+			locationManager.requestLocationUpdates(provider, 10000, 0,
 					locationListener);
 		} else {
 			Toast.makeText(getActivity().getApplicationContext(), "No location",
@@ -202,10 +202,6 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 	}
 
 	public void myClickHandler(View target) {
-		if (target.getId() == R.id.b_updateLoc) {
-			Log.w("fr.eurecom.hikingit", "updateLoc");
-			// onLocationChanged( location);
-		}
 	}
 
 	public void onMapLongClick(LatLng point) {

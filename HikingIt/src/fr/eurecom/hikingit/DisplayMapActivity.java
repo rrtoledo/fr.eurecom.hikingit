@@ -180,8 +180,8 @@ public class DisplayMapActivity extends FragmentActivity implements
 					}
 				};
 
-				Log.w("fr.eurecom.hikingit", " first locUp 20000");
-				locationManager.requestLocationUpdates(provider, 20000, 0,
+				Log.w("fr.eurecom.hikingit", " first locUp 5000");
+				locationManager.requestLocationUpdates(provider, 5000, 0,
 						locationListener);
 			} else {
 				Toast.makeText(getApplicationContext(), "No location",

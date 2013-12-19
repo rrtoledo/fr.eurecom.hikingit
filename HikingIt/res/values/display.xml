@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="difficulties">
+    <string-array name="display">
         <item>Saved tracks</item>
         <item>Traveled tracks</item>
         <item>Created tracks</item>

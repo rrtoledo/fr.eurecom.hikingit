@@ -240,7 +240,7 @@ LoaderManager.LoaderCallbacks<Cursor>{
 			text.setText("No tracks");
 			Log.w("fr.eurecom.hikingit"," ListFragment empty cursor");
 		}
-		else text.setText("Result :");
+		else {text.setText("Result :");}
 		
 		String[] from = new String[] { TrackTable.COLUMN_TITLE, TrackTable.COLUMN_DIFFICULTY };
 		// Fields on the UI to which we map
