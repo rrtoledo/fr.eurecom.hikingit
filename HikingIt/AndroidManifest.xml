@@ -18,7 +18,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
          The following two permissions are not required to use
-	     Google Maps Android API v2, but are recommended.
+	     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -44,6 +44,7 @@
 
         <activity
             android:name="fr.eurecom.hikingit.HomeActivity"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateVisible|adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -94,7 +95,7 @@
             android:name="fr.eurecom.hikingit.contentprovider.TrackContentProvider"
             android:authorities="fr.eurecom.hikingit.contentprovider" >
         </provider>
-        
+
         <activity
             android:name="fr.eurecom.hikingit.AccountActivity"
             android:label="@string/title_activity_account" >
@@ -106,6 +107,10 @@
         <activity
             android:name="fr.eurecom.hikingit.DisplayFragmentActivity"
             android:label="@string/title_activity_my_tracks" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.hikingit.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

@@ -3,49 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/hike5"
+    android:background="@drawable/frontpage"
     android:orientation="vertical"
     tools:context=".HomeActivity" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
-            android:text="New Track" />
+  		<Button
+            android:id="@+id/button1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/settings" />
+        
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
-            android:text="My Tracks" />
-
-        <Button
-            android:id="@+id/button4"
             android:layout_width="30dp"
-            android:layout_height="32dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/button3"
-            android:layout_marginBottom="14dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/info" />
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="86dp"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/button2"
-            android:layout_below="@+id/button2"
-            android:layout_marginTop="104dp"
-            android:text="My Profile" />
-    </RelativeLayout>
+      
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -16,5 +16,20 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+    <style name="home_item1">
+	    <item name="android:maxWidth">40dp</item>
+	    
+	</style>
+	
+	<style name="home_item2">
+	     <item name="android:maxWidth">40dp</item>
+	    
+	</style>
+	
+	<style name="home_item3">
+	    <item name="android:maxWidth">40dp</item>
+	    
+	</style>
 
 </resources>

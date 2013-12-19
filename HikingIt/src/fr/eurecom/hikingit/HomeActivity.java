@@ -1,5 +1,7 @@
 package fr.eurecom.hikingit;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import fr.eurecom.hikingit.AboutActivity;
 import fr.eurecom.hikingit.AccountActivity;
 import fr.eurecom.hikingit.MyTracksActivity;
@@ -15,11 +17,14 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class HomeActivity extends Activity {
 
@@ -50,7 +55,7 @@ public class HomeActivity extends Activity {
 		button1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(HomeActivity.this, AccountActivity.class);
+				Intent i = new Intent(HomeActivity.this, SettingsActivity.class);
 				startActivity(i);
 				mplayer.start();
 			}
@@ -58,28 +63,6 @@ public class HomeActivity extends Activity {
 
 		Button button2 = (Button) findViewById(R.id.button2);
 		button2.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(HomeActivity.this,
-						DisplayFragmentActivity.class);
-				startActivity(i);
-				mplayer.start();
-			}
-		});
-
-		Button button3 = (Button) findViewById(R.id.button3);
-		button3.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(HomeActivity.this,
-						TrackEditActivity.class);
-				startActivity(i);
-				mplayer.start();
-			}
-		});
-
-		Button button4 = (Button) findViewById(R.id.button4);
-		button4.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(HomeActivity.this, AboutActivity.class);
@@ -114,6 +97,37 @@ public class HomeActivity extends Activity {
 				});
 		AlertDialog alert = alertDialogBuilder.create();
 		alert.show();
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.home, menu);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.item1:
+			Intent intentMyTracks = new Intent(this,
+					DisplayFragmentActivity.class);
+			startActivity(intentMyTracks);
+			return true;
+
+		case R.id.item2:
+			Intent intentNewTrack = new Intent(this, TrackEditActivity.class);
+			startActivity(intentNewTrack);
+			return true;
+
+		case R.id.item3:
+			Intent intentProfile = new Intent(this, AccountActivity.class);
+			startActivity(intentProfile);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 }
