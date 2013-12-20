@@ -106,7 +106,8 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 		googleMap.setOnMapLongClickListener(this);
 		googleMap.setOnMarkerClickListener(this);
 
-		if (location != null) {
+		if (location != null && 
+				locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
 			latLng = new LatLng(latitude, longitude);
@@ -130,6 +131,8 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 					.title("ME"));
+			
+			fillData();
 
 			locationListener = new LocationListener() {
 
@@ -138,10 +141,10 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 
 					Log.w("fr.eurecom.hikingit", "my position pinned");
 					// redraw the marker when get location update.
-					if (location.getLatitude() > nonRefreshArea[0]
-							|| location.getLatitude() < nonRefreshArea[1]
-							|| location.getLongitude() > nonRefreshArea[2]
-							|| location.getLongitude() < nonRefreshArea[3]) {
+					if (location.getLatitude() < nonRefreshArea[0]
+							|| location.getLatitude() > nonRefreshArea[1]
+							|| location.getLongitude() < nonRefreshArea[2]
+							|| location.getLongitude() > nonRefreshArea[3]) {
 
 						latitude = location.getLatitude();
 						longitude = location.getLongitude();
@@ -283,7 +286,7 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 	}
 
 	private void fillData() {
-
+		Log.w("fr.eurecom.hikingit","PMF fillData called");
 		if (polyline != null && !polyline.isEmpty()) {
 			polyline.clear();
 			Log.w("fr.eurecom.hikingit",

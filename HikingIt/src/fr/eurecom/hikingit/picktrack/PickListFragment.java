@@ -105,7 +105,48 @@ public class PickListFragment extends Fragment implements
 
 		});
 
-		locationListener = new mylocationlistener();
+		locationListener = new mylocationlistener(){
+
+			public void onLocationChanged(Location location) {
+				Log.w("fr.eurecom.hikingit", " onLocationChanged");
+
+				Log.w("fr.eurecom.hikingit", "my position pinned");
+				// redraw the marker when get location update.
+				if (location.getLatitude() > nonRefreshArea[0]
+						|| location.getLatitude() < nonRefreshArea[1]
+						|| location.getLongitude() > nonRefreshArea[2]
+						|| location.getLongitude() < nonRefreshArea[3]) {
+
+					latitude = location.getLatitude();
+					longitude = location.getLongitude();
+
+					nonRefreshArea[0] = latitude + marginRefresh;
+					nonRefreshArea[1] = latitude - marginRefresh;
+					nonRefreshArea[2] = longitude + marginRefresh;
+					nonRefreshArea[3] = longitude - marginRefresh;
+					fillData();
+				}
+			}
+
+			@Override
+			public void onProviderDisabled(String provider) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 
 		locationManager = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
