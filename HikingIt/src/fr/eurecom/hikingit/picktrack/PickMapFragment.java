@@ -85,6 +85,9 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 
 		View rootView = inflater.inflate(R.layout.pickmap_fragment,
 				container, false);
+		
+		Log.w("fr.eurecom.hikingit", "PMF PMF PMF PMF PMF PMF PMF");
+
 
 		googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.dmf_map)).getMap();
 		
@@ -132,14 +135,15 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 					.title("ME"));
 			
+			Log.w("fr.eurecom.hikingit", "fill data init before 1rst locchanged");
 			fillData();
 
 			locationListener = new LocationListener() {
 
 				public void onLocationChanged(Location location) {
-					Log.w("fr.eurecom.hikingit", " onLocationChanged");
+					Log.w("fr.eurecom.hikingit", "first onLocationChanged");
 
-					Log.w("fr.eurecom.hikingit", "my position pinned");
+					Log.w("fr.eurecom.hikingit", "first : my position pinned");
 					// redraw the marker when get location update.
 					if (location.getLatitude() < nonRefreshArea[0]
 							|| location.getLatitude() > nonRefreshArea[1]
@@ -157,6 +161,8 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 						fillData();
 					}
 					drawMarker(location);
+					Log.w("fr.eurecom.hikingit", "first : leaving on locationChanged");
+
 				}
 
 				@Override
@@ -192,7 +198,7 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 
 	public void onLocationChanged(Location location) {
 		// redraw the marker when get location update.
-		Log.w("fr.eurecom.hikingit", " onLocationChanged override");
+		Log.w("fr.eurecom.hikingit", "Seconde onLocationChanged override");
 		if (location.getLatitude() < nonRefreshArea[0]
 				|| location.getLatitude() > nonRefreshArea[1]
 				|| location.getLongitude() < nonRefreshArea[2]
@@ -208,9 +214,13 @@ public class PickMapFragment extends Fragment implements OnMapClickListener,
 			nonRefreshArea[2] = longitude - marginRefresh;
 			nonRefreshArea[3] = longitude + marginRefresh;
 			googleMap.clear();
+			Log.w("fr.eurecom.hikingit", "Seconde onLocationChanged call fillData");
+
 			fillData();
 		}
 		drawMarker(location);
+		Log.w("fr.eurecom.hikingit", "Seconde onLocationChanged leaving");
+
 	}
 
 	@Override

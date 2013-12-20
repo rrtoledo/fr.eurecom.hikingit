@@ -138,10 +138,10 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 
 					Log.w("fr.eurecom.hikingit", "my position pinned");
 					// redraw the marker when get location update.
-					if (location.getLatitude() > nonRefreshArea[0]
-							|| location.getLatitude() < nonRefreshArea[1]
-							|| location.getLongitude() > nonRefreshArea[2]
-							|| location.getLongitude() < nonRefreshArea[3]) {
+					if (location.getLatitude() < nonRefreshArea[0]
+							|| location.getLatitude() > nonRefreshArea[1]
+							|| location.getLongitude() < nonRefreshArea[2]
+							|| location.getLongitude() > nonRefreshArea[3]) {
 
 						latitude = location.getLatitude();
 						longitude = location.getLongitude();

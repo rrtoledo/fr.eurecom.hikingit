@@ -173,10 +173,10 @@ public class PickListFragment extends Fragment implements
 			latitude = location.getLatitude();
 			Log.w("fr.eurecom.hikingit", "location initialized " + latitude
 					+ " " + longitude);
-			nonRefreshArea[0] = (latitude - marginRefresh);
-			nonRefreshArea[1] = (latitude + marginRefresh);
-			nonRefreshArea[2] = (longitude - marginRefresh);
-			nonRefreshArea[3] = (longitude + marginRefresh);
+			nonRefreshArea[0] = (latitude + marginRefresh);
+			nonRefreshArea[1] = (latitude - marginRefresh);
+			nonRefreshArea[2] = (longitude + marginRefresh);
+			nonRefreshArea[3] = (longitude - marginRefresh);
 			Log.w("fr.eurecom.hikingit",
 					"ListFragment calling fillData beginning");
 			fillData();
@@ -378,18 +378,18 @@ public class PickListFragment extends Fragment implements
 	private class mylocationlistener implements LocationListener {
 		@Override
 		public void onLocationChanged(Location location) {
-			if (location.getLatitude() < nonRefreshArea[0]
-					|| location.getLatitude() > nonRefreshArea[1]
-					|| location.getLongitude() < nonRefreshArea[2]
-					|| location.getLongitude() > nonRefreshArea[3]) {
+			if (location.getLatitude() > nonRefreshArea[0]
+					|| location.getLatitude() < nonRefreshArea[1]
+					|| location.getLongitude() > nonRefreshArea[2]
+					|| location.getLongitude() < nonRefreshArea[3]) {
 
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
 
-				nonRefreshArea[0] = (latitude - marginRefresh);
-				nonRefreshArea[1] = (latitude + marginRefresh);
-				nonRefreshArea[2] = (longitude - marginRefresh);
-				nonRefreshArea[3] = (longitude + marginRefresh);
+				nonRefreshArea[0] = (latitude + marginRefresh);
+				nonRefreshArea[1] = (latitude - marginRefresh);
+				nonRefreshArea[2] = (longitude + marginRefresh);
+				nonRefreshArea[3] = (longitude - marginRefresh);
 
 				fillData();
 			}
