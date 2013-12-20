@@ -334,10 +334,11 @@ containing a value of this type.
         public static final int pickmap_fragment=0x7f030014;
         public static final int picktab_viewer=0x7f030015;
         public static final int prompts=0x7f030016;
-        public static final int track_detail=0x7f030017;
-        public static final int track_edit=0x7f030018;
-        public static final int track_list=0x7f030019;
-        public static final int track_row=0x7f03001a;
+        public static final int selected_track=0x7f030017;
+        public static final int track_detail=0x7f030018;
+        public static final int track_edit=0x7f030019;
+        public static final int track_list=0x7f03001a;
+        public static final int track_row=0x7f03001b;
     }
     public static final class menu {
         public static final int about=0x7f0d0000;

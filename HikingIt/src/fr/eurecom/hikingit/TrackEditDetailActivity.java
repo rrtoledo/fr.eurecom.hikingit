@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import fr.eurecom.hikingit.R.id;
+import fr.eurecom.hikingit.R.layout;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
 import fr.eurecom.hikingit.R;

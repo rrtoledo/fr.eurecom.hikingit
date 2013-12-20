@@ -7,6 +7,7 @@ import fr.eurecom.hikingit.AccountActivity;
 import fr.eurecom.hikingit.MyTracksActivity;
 import fr.eurecom.hikingit.NewTrackActivity;
 import fr.eurecom.hikingit.R;
+import fr.eurecom.hikingit.displaytrack.DisplayFragmentActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

@@ -49,36 +49,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.DisplayActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name="fr.eurecom.hikingit.SearchTrackActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.DisplayAllActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
-        <activity
-            android:name="fr.eurecom.hikingit.DisplayMapActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
-        <activity
-            android:name="fr.eurecom.hikingit.TrackDetailActivity"
+            android:name="fr.eurecom.hikingit.SelectedTrackActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
             android:name="fr.eurecom.hikingit.NewTrackActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
-        <activity
-            android:name="fr.eurecom.hikingit.TrackEditMapActivity"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
-        <activity
-            android:name="fr.eurecom.hikingit.TrackEditDetailActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
@@ -90,26 +69,26 @@
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.CreateFragmentActivity"
+            android:name="fr.eurecom.hikingit.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="fr.eurecom.hikingit.createtrack.CreateFragmentActivity"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.DisplayFragmentActivity"
+            android:name="fr.eurecom.hikingit.displaytrack.DisplayFragmentActivity"
             android:label="@string/title_activity_my_tracks" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.EditFragmentActivity"
+            android:name="fr.eurecom.hikingit.edittrack.EditFragmentActivity"
             android:label="@string/title_activity_my_tracks"
             android:uiOptions="splitActionBarWhenNarrow" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.PickFragmentActivity"
+            android:name="fr.eurecom.hikingit.picktrack.PickFragmentActivity"
             android:label="@string/title_activity_my_tracks" >
-        </activity>
-        <activity
-            android:name="fr.eurecom.hikingit.SettingsActivity"
-            android:label="@string/title_activity_settings" >
         </activity>
 
         <provider

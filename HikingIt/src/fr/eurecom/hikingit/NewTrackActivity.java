@@ -1,6 +1,8 @@
 package fr.eurecom.hikingit;
 
 import fr.eurecom.hikingit.R;
+import fr.eurecom.hikingit.createtrack.CreateFragmentActivity;
+import fr.eurecom.hikingit.picktrack.PickFragmentActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

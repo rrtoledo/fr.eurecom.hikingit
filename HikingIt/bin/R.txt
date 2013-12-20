@@ -177,10 +177,11 @@ int layout picklist_fragment 0x7f030013
 int layout pickmap_fragment 0x7f030014
 int layout picktab_viewer 0x7f030015
 int layout prompts 0x7f030016
-int layout track_detail 0x7f030017
-int layout track_edit 0x7f030018
-int layout track_list 0x7f030019
-int layout track_row 0x7f03001a
+int layout selected_track 0x7f030017
+int layout track_detail 0x7f030018
+int layout track_edit 0x7f030019
+int layout track_list 0x7f03001a
+int layout track_row 0x7f03001b
 int menu about 0x7f0d0000
 int menu account 0x7f0d0001
 int menu display 0x7f0d0002
