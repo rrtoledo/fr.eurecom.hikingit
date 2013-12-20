@@ -372,8 +372,8 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 	}
 	
 	private void setSaved(){		
-		String where = ""; //"id = ?";
-		String[] whereArgs = new String[1] ;//{String.valueOf(id)};
+		String where = "";
+		String[] whereArgs = new String[1] ;
 		ContentValues data = new ContentValues();                          
 		data.put("flags", "1");
 		int i = getContentResolver().update(trackUri, data, where , whereArgs);
