@@ -10,11 +10,13 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.ActionBar.Tab;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 
 public class DisplayFragmentActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -24,7 +26,8 @@ public class DisplayFragmentActivity extends FragmentActivity implements ActionB
 	    // Tab titles
 	 private String[] tabs = { "Display List", "Display on Map" };
 	 public int status;
-	 
+	 private int fragmentIds[];
+	 private static int nbfrag=0;
 	 
 	 @Override
 	    protected void onCreate(Bundle savedInstanceState) {
@@ -91,5 +94,18 @@ public class DisplayFragmentActivity extends FragmentActivity implements ActionB
 	 
 	    @Override
 	    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	    }
+	    
+	    public void onAttachFragment(Fragment fragment) {
+	        // TODO Auto-generated method stub
+	    	Log.w("fr.eurecom.hikingit","onAttachFragment");
+	        super.onAttachFragment(fragment);
+	        fragmentIds[nbfrag] = fragment.getId();
+	        nbfrag++;
+	    }
+	    
+	    
+	    public void onStop(int i){
+	    	
 	    }
 }

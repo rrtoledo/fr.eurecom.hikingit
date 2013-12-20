@@ -173,17 +173,6 @@ public class DisplayListFragment extends Fragment implements
 		}
 	}
 
-	@Override
-	public void onPause() {
-		super.onResume();
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			allButton.setChecked(true);
-			nearButton.setClickable(false);
-		} else {
-			allButton.setChecked(true);
-			nearButton.setClickable(true);
-		}
-	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -414,6 +403,25 @@ public class DisplayListFragment extends Fragment implements
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// TODO Auto-generated method stub
 
+		}
+	}
+	
+	public void onPause(){
+		super.onPause();
+		Log.w("fr.eurecom.hiking","List onPause");
+	}
+	
+	public void onStop(){
+		super.onStop();
+		Log.w("fr.eurecom.hiking","List onStop");
+		locationManager.removeUpdates(locationListener);
+		
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			allButton.setChecked(true);
+			nearButton.setClickable(false);
+		} else {
+			allButton.setChecked(true);
+			nearButton.setClickable(true);
 		}
 	}
 }

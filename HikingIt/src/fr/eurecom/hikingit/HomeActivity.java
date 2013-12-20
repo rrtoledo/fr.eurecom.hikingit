@@ -33,18 +33,13 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			showGPSDisabledAlertToUser();
 		}
-		/*
-		 * requestWindowFeature(Window.FEATURE_NO_TITLE);
-		 * getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		 * WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		 */
 
 		setContentView(R.layout.activity_home);
 

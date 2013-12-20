@@ -51,6 +51,9 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 	private double longitude;
 	private double latitude;
 	private Marker myMarker;
+	
+	LocationManager locationManager;
+	LocationListener locationListener;
 
 	Vector<Vector<LatLng>> listVect = new Vector<Vector<LatLng>>();
 	// Vector<LatLng> vectorLoc = new Vector<LatLng>();
@@ -81,7 +84,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 		
 		googleMap.setMyLocationEnabled(true);
 
-		LocationManager locationManager = (LocationManager) getActivity()
+		locationManager = (LocationManager) getActivity()
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		// Creating a criteria object to retrieve provider
@@ -122,7 +125,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 					.title("ME"));
 
-			LocationListener locationListener = new LocationListener() {
+			locationListener = new LocationListener() {
 
 				public void onLocationChanged(Location location) {
 					Log.w("fr.eurecom.hikingit", " onLocationChanged");
@@ -435,6 +438,17 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			Log.w("fr.eurecom.hikingit",
 					"polyline created " + polyline.toString());
 		}
+	}
+	
+	public void onPause(){
+		super.onPause();
+		Log.w("fr.eurecom.hiking","Map onPause");
+	}
+	
+	public void onStop(){
+		super.onStop();
+		Log.w("fr.eurecom.hiking","Map onStop");
+		locationManager.removeUpdates(locationListener);
 	}
 	
 }
