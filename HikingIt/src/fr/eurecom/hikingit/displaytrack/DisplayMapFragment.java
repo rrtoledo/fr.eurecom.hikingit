@@ -272,6 +272,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 					+ idMark);
 			Log.w("fr.eurecom.hikingit", "trackuri : " + trackUri);
 			i.putExtra(TrackContentProvider.CONTENT_ITEM_TYPE, trackUri);
+			i.putExtra("Caller", 0);
 			startActivity(i);
 			return true;
 		} else {

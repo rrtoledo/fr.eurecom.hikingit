@@ -88,6 +88,7 @@ public class PickListFragment extends Fragment implements
 				Uri trackUri = Uri.parse(TrackContentProvider.CONTENT_URI + "/"
 						+ id);
 				i.putExtra(TrackContentProvider.CONTENT_ITEM_TYPE, trackUri);
+				i.putExtra("Caller", 1);
 				startActivity(i);
 			}
 		});

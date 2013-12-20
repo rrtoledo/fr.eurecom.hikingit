@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -13,6 +14,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +50,11 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 	private TextView mSummaryText;
 	private TextView mDuration;
 	private TextView mPos;
+	private Button mButton;
 
 	private Uri trackUri;
+	private Integer caller;
+	Integer id;
 
 	private LocationListener locationListener;
 	private GoogleMap googleMap;
@@ -67,6 +73,7 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 		mTitleText = (TextView) findViewById(R.id.track_edit_title);
 		mSummaryText = (TextView) findViewById(R.id.tdSummary);
 		mDuration = (TextView) findViewById(R.id.tdDuration);
+		mButton = (Button) findViewById(R.id.selectedButton);
 
 		// Getting Google Play availability status
 		int status = GooglePlayServicesUtil
@@ -151,6 +158,12 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 			trackUri = (bundle == null) ? null : (Uri) bundle
 					.getParcelable(TrackContentProvider.CONTENT_ITEM_TYPE);
 
+			caller = extras.getInt("Caller");
+			if ( caller != null && caller == 0)
+				mButton.setText("Track It!");
+			if ( caller != null && caller == 1)
+				mButton.setText("Save track");
+			
 			// Or passed from the other activity
 			if (extras != null) {
 				Log.w("fr.eurecom.hikingit", "there is extra");
@@ -250,7 +263,7 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 	}
 
 	private void fillData(Uri uri) {
-		String[] projection = { TrackTable.COLUMN_TITLE,
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
 				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
 				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
@@ -263,6 +276,9 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 		if (cursor != null && cursor.moveToFirst()) {
 			cursor.moveToFirst();
 
+			id = Integer.valueOf(cursor.getString(cursor
+					.getColumnIndexOrThrow(TrackTable.COLUMN_ID)));
+			
 			String s = cursor.getString(cursor
 					.getColumnIndexOrThrow(TrackTable.COLUMN_COORDS));
 
@@ -342,4 +358,28 @@ public class SelectedTrackActivity extends Activity implements LocationListener,
 			}
 		}
 	}
+	
+	public void selectedAction(View v){
+		Log.w("fr.eurecom.hikingit","The caller is "+caller);
+		switch (caller){
+		case 0:
+			//Function to enable energy saving, and other stuff...
+			break;
+		case 1:
+			setSaved();
+			break;
+		}
+	}
+	
+	private void setSaved(){		
+		String where = ""; //"id = ?";
+		String[] whereArgs = new String[1] ;//{String.valueOf(id)};
+		ContentValues data = new ContentValues();                          
+		data.put("flags", "1");
+		int i = getContentResolver().update(trackUri, data, where , whereArgs);
+		if (i > 0)
+			Toast.makeText(this, i+" row(s) updated",
+				Toast.LENGTH_LONG).show();
+	}
+	
 }

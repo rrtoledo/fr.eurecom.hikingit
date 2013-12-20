@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/map"
-        android:layout_width="260dp"
+        android:layout_width="248dp"
         android:layout_height="234dp"
         android:layout_gravity="center"
         android:layout_marginBottom="10dip"
@@ -83,5 +83,13 @@
         android:gravity="top"
         android:hint="@string/track_edit_summary" >
     </TextView>
+
+    <Button
+        android:id="@+id/selectedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Button"
+        android:onClick="selectedAction" />
 
 </LinearLayout>
