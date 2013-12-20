@@ -4,7 +4,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import fr.eurecom.hikingit.R;
-import fr.eurecom.hikingit.TabPagerAdapter;
+import fr.eurecom.hikingit.TabCreateAdapter;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
 import fr.eurecom.hikingit.database.TrackTable;
 import android.app.ActionBar;
@@ -43,7 +43,7 @@ public class CreateFragmentActivity extends FragmentActivity implements
 	private String content = "content://fr.eurecom.hikingit.contentprovider/";
 
 	private ViewPager viewPager;
-	private TabPagerAdapter mAdapter;
+	private TabCreateAdapter mAdapter;
 	private ActionBar actionBar;
 	// Tab titles
 	private String[] tabs = { "Info", "Edit Map" };
@@ -52,7 +52,7 @@ public class CreateFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.tab_viewer);
+		setContentView(R.layout.createtab_viewer);
 
 		status = GooglePlayServicesUtil
 				.isGooglePlayServicesAvailable(getBaseContext());
@@ -70,7 +70,7 @@ public class CreateFragmentActivity extends FragmentActivity implements
 			// Initilization
 			viewPager = (ViewPager) findViewById(R.id.pager);
 			actionBar = getActionBar();
-			mAdapter = new TabPagerAdapter(getSupportFragmentManager());
+			mAdapter = new TabCreateAdapter(getSupportFragmentManager());
 
 			viewPager.setAdapter(mAdapter);
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

@@ -170,8 +170,8 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 				}
 			};
 
-			Log.w("fr.eurecom.hikingit", "MapFragment first lookUp 5000");
-			locationManager.requestLocationUpdates(provider, 5000, 0,
+			Log.w("fr.eurecom.hikingit", "MapFragment first lookUp 10000");
+			locationManager.requestLocationUpdates(provider, 10000, 0,
 					locationListener);
 		} else {
 			Toast.makeText(getActivity().getApplicationContext(), "No location",

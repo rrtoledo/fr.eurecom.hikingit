@@ -65,7 +65,7 @@ public class CreateMapFragment extends Fragment implements OnMapClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.edit_map_fragment, container,
+		View rootView = inflater.inflate(R.layout.createmap_fragment, container,
 				false);
 		setHasOptionsMenu(true);
 

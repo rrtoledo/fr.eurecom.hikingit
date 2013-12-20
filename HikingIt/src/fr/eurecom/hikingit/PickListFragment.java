@@ -151,10 +151,10 @@ public class PickListFragment extends Fragment implements
 			allButton.setChecked(true);
 			nearButton.setClickable(false);
 		} else {
-			allButton.setChecked(true);
 			nearButton.setClickable(true);
+			nearButton.setChecked(true);
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+					LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
 		}
 	}
 

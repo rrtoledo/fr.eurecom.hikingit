@@ -51,6 +51,7 @@ public class DisplayListFragment extends Fragment implements
 	private double margin = 5;
 	private double nonRefreshArea[] = { 0, 0, 0, 0 };
 	private double marginRefresh = 10;
+	private int trackIds;
 	private ListView listView;
 	private Spinner spinner;
 	private RadioGroup radio;
@@ -123,7 +124,7 @@ public class DisplayListFragment extends Fragment implements
 		}
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				5000, 0, locationListener);
+				10000, 0, locationListener);
 
 		// Creating a criteria object to retrieve provider
 		Criteria criteria = new Criteria();
@@ -154,23 +155,10 @@ public class DisplayListFragment extends Fragment implements
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
+		super.onCreateContextMenu(menu, v, menuInfo);	
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
-		menu.add(0, EDIT_ID, 0, R.string.menu_edit);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			allButton.setChecked(true);
-			nearButton.setClickable(false);
-		} else {
-			allButton.setChecked(true);
-			nearButton.setClickable(true);
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
-		}
+		if(spinner.getSelectedItemPosition()==2)
+			menu.add(0, EDIT_ID, 0, R.string.menu_edit);
 	}
 
 
@@ -189,7 +177,7 @@ public class DisplayListFragment extends Fragment implements
 		case EDIT_ID:
 			AdapterContextMenuInfo inf = (AdapterContextMenuInfo) item
 					.getMenuInfo();
-			Intent i = new Intent(getActivity(), TrackEditDetailActivity.class);
+			Intent i = new Intent(getActivity(), EditFragmentActivity.class);
 			Uri trackUri = Uri.parse(TrackContentProvider.CONTENT_URI + "/"
 					+ inf.id);
 			i.putExtra(TrackContentProvider.CONTENT_ITEM_TYPE, trackUri);
@@ -406,6 +394,20 @@ public class DisplayListFragment extends Fragment implements
 		}
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			allButton.setChecked(true);
+			nearButton.setClickable(false);
+		} else {
+			nearButton.setClickable(true);
+			nearButton.setChecked(true);
+			locationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+		}
+	}
+	
 	public void onPause(){
 		super.onPause();
 		Log.w("fr.eurecom.hiking","List onPause");
@@ -415,13 +417,5 @@ public class DisplayListFragment extends Fragment implements
 		super.onStop();
 		Log.w("fr.eurecom.hiking","List onStop");
 		locationManager.removeUpdates(locationListener);
-		
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			allButton.setChecked(true);
-			nearButton.setClickable(false);
-		} else {
-			allButton.setChecked(true);
-			nearButton.setClickable(true);
-		}
 	}
 }
