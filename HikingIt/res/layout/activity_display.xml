@@ -4,7 +4,7 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/adDisplayAll"
+        android:id="@+id/ntCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

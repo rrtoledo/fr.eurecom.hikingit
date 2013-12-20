@@ -99,7 +99,7 @@ public class DisplayAllActivity extends ListActivity implements
 	}
 
 	private void createTrack() {
-		Intent i = new Intent(this, TrackEditActivity.class);
+		Intent i = new Intent(this, NewTrackActivity.class);
 		startActivity(i);
 	}
 

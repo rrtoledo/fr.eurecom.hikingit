@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import fr.eurecom.hikingit.AboutActivity;
 import fr.eurecom.hikingit.AccountActivity;
 import fr.eurecom.hikingit.MyTracksActivity;
-import fr.eurecom.hikingit.TrackEditActivity;
+import fr.eurecom.hikingit.NewTrackActivity;
 import fr.eurecom.hikingit.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,7 +46,7 @@ public class HomeActivity extends Activity {
 		Intent intent = null;
 		mplayer = MediaPlayer.create(this, R.raw.button_30);
 
-		Button button1 = (Button) findViewById(R.id.button1);
+		Button button1 = (Button) findViewById(R.id.ntRecord);
 		button1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -56,7 +56,7 @@ public class HomeActivity extends Activity {
 			}
 		});
 
-		Button button2 = (Button) findViewById(R.id.button2);
+		Button button2 = (Button) findViewById(R.id.ntPick);
 		button2.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -111,7 +111,7 @@ public class HomeActivity extends Activity {
 			return true;
 
 		case R.id.item2:
-			Intent intentNewTrack = new Intent(this, TrackEditActivity.class);
+			Intent intentNewTrack = new Intent(this, NewTrackActivity.class);
 			startActivity(intentNewTrack);
 			return true;
 

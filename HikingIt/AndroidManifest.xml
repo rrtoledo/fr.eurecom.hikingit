@@ -18,7 +18,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
          The following two permissions are not required to use
-	     Google Maps Android API v2, but are recommended.
+	     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -78,7 +78,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
-            android:name="fr.eurecom.hikingit.TrackEditActivity"
+            android:name="fr.eurecom.hikingit.NewTrackActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
@@ -90,12 +90,6 @@
             android:name="fr.eurecom.hikingit.TrackEditDetailActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
-
-        <provider
-            android:name="fr.eurecom.hikingit.contentprovider.TrackContentProvider"
-            android:authorities="fr.eurecom.hikingit.contentprovider" >
-        </provider>
-
         <activity
             android:name="fr.eurecom.hikingit.AccountActivity"
             android:label="@string/title_activity_account" >
@@ -109,9 +103,18 @@
             android:label="@string/title_activity_my_tracks" >
         </activity>
         <activity
+            android:name="fr.eurecom.hikingit.PickFragmentActivity"
+            android:label="@string/title_activity_my_tracks" >
+        </activity>
+        <activity
             android:name="fr.eurecom.hikingit.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
+        <provider
+            android:name="fr.eurecom.hikingit.contentprovider.TrackContentProvider"
+            android:authorities="fr.eurecom.hikingit.contentprovider" >
+        </provider>
     </application>
 
 </manifest>

@@ -466,7 +466,6 @@ public class CreateMapFragment extends Fragment implements OnMapClickListener,
 				} else {
 					vectorLoc.remove(0);
 					markers.remove(0);
-					googleMap.clear();
 					break;
 				}
 				vectorLoc.remove(vectorLoc.get(m));

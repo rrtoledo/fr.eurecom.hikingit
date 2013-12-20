@@ -319,10 +319,10 @@ public class DisplayListFragment extends Fragment implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_DIFFICULTY };
-		if (Integer.toString(radio.getCheckedRadioButtonId()) == "21310344131") {
+		if (nearButton.isChecked()) {
 
 		}
-		String selection = "flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
+		String selection = "flags = ? or flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
 
 		double limitXMax = latitude + margin;
 		String lttMax = String.valueOf(limitXMax);
@@ -336,7 +336,7 @@ public class DisplayListFragment extends Fragment implements
 		double limitYMin = longitude - margin;
 		String lgtMin = String.valueOf(limitYMin);
 
-		String[] selectionArgs = { "1", lttMax, lttMin, lgtMax, lgtMin };
+		String[] selectionArgs = { "1", "3", lttMax, lttMin, lgtMax, lgtMin };
 		String order = "difficulty";
 
 		Cursor cursor = getActivity().getContentResolver().query(

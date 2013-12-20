@@ -46,7 +46,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="17dip"
-        android:text="Your result :"
+        android:text="Display result :"
         android:textSize="20dip" />
 
     <ListView
