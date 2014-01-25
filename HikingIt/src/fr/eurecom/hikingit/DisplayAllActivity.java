@@ -127,7 +127,7 @@ public class DisplayAllActivity extends ListActivity implements
 		String[] from = new String[] { TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_DIFFICULTY };
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.label, R.id.diff };
+		int[] to = new int[] { R.id.label, R.id.order };
 
 		getLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(this, R.layout.track_row, null, from,

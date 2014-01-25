@@ -3,13 +3,13 @@ package fr.eurecom.hikingit.edittrack;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.drawable;
 import fr.eurecom.hikingit.R.id;
 import fr.eurecom.hikingit.R.layout;
 import fr.eurecom.hikingit.R.menu;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
+import fr.eurecom.hikingit.createtrack.OnFragmentClickListener;
 import fr.eurecom.hikingit.database.TrackTable;
 import android.app.Activity;
 import android.app.AlertDialog;

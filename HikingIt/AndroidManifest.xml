@@ -36,7 +36,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBc611-j3G3HowtLr-QxgjvKlLZHnYgJu4" />
+            android:value="AIzaSyCTgHO8XN6zIVamBJ0vb7nQV6W720H4GmI" />
 
         <activity
             android:name="fr.eurecom.hikingit.HomeActivity"

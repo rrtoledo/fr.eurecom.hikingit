@@ -12,10 +12,11 @@ public final class R {
         public static final int difficulties=0x7f0a0000;
         public static final int display=0x7f0a0001;
         public static final int gender=0x7f0a0002;
-        public static final int pref_example_list_titles=0x7f0a0003;
-        public static final int pref_example_list_values=0x7f0a0004;
-        public static final int pref_sync_frequency_titles=0x7f0a0005;
-        public static final int pref_sync_frequency_values=0x7f0a0006;
+        public static final int order=0x7f0a0003;
+        public static final int pref_example_list_titles=0x7f0a0004;
+        public static final int pref_example_list_values=0x7f0a0005;
+        public static final int pref_sync_frequency_titles=0x7f0a0006;
+        public static final int pref_sync_frequency_values=0x7f0a0007;
     }
     public static final class attr {
         /** 
@@ -243,71 +244,79 @@ containing a value of this type.
         public static final int track=0x7f020036;
     }
     public static final class id {
+        public static final int GeoEnable=0x7f070021;
         public static final int LinearLayout01=0x7f070017;
-        public static final int RbAll=0x7f070024;
-        public static final int RbNear=0x7f070023;
-        public static final int TextView02=0x7f07002c;
-        public static final int action_settings=0x7f07003a;
+        public static final int RbAll=0x7f070031;
+        public static final int RbNear=0x7f070030;
+        public static final int TextView01=0x7f070027;
+        public static final int TextView02=0x7f070029;
+        public static final int TextView03=0x7f070025;
+        public static final int action_settings=0x7f070042;
         public static final int adDisplay=0x7f07000f;
         public static final int adDisplayMap=0x7f070010;
-        public static final int all=0x7f07003f;
+        public static final int all=0x7f070047;
+        public static final int any=0x7f070024;
         public static final int bdone=0x7f070015;
         public static final int button1=0x7f070007;
         public static final int coordlist=0x7f07001c;
-        public static final int diff=0x7f070039;
         public static final int difficulty=0x7f07001b;
-        public static final int display_pager=0x7f070028;
-        public static final int dlf_listview=0x7f070026;
-        public static final int dmf_map=0x7f070027;
+        public static final int display_pager=0x7f07002e;
+        public static final int dlf_listview=0x7f07002c;
+        public static final int dmf_map=0x7f07002d;
         public static final int editText1=0x7f070008;
         public static final int editText2=0x7f07000d;
-        public static final int editTextDialogUserInput=0x7f07002a;
+        public static final int editTextDialogUserInput=0x7f070033;
         public static final int editTextResult=0x7f07000a;
+        public static final int filterCat=0x7f07000c;
+        public static final int filterOrder=0x7f07002a;
+        public static final int groupDisplay=0x7f070022;
         public static final int hybrid=0x7f070004;
-        public static final int icon=0x7f070037;
+        public static final int icon=0x7f07003f;
         public static final int imageView1=0x7f070019;
-        public static final int insert=0x7f07003e;
-        public static final int item1=0x7f07003b;
-        public static final int item2=0x7f07003c;
-        public static final int item3=0x7f07003d;
-        public static final int label=0x7f070038;
-        public static final int layout_root=0x7f070029;
+        public static final int insert=0x7f070046;
+        public static final int item1=0x7f070043;
+        public static final int item2=0x7f070044;
+        public static final int item3=0x7f070045;
+        public static final int label=0x7f070040;
+        public static final int layout_root=0x7f070032;
         public static final int map=0x7f070014;
-        public static final int mvis=0x7f070040;
+        public static final int mvis=0x7f070048;
+        public static final int nearMe=0x7f070023;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
         public static final int ntCreate=0x7f07000e;
         public static final int ntPick=0x7f070012;
         public static final int ntRecord=0x7f070011;
+        public static final int order=0x7f070041;
         public static final int page=0x7f070016;
         public static final int pager=0x7f070020;
-        public static final int radioChoice=0x7f070022;
-        public static final int ratingBar1=0x7f07002b;
-        public static final int realposition=0x7f070035;
-        public static final int result=0x7f070025;
+        public static final int radioChoice=0x7f07002f;
+        public static final int ratingBar1=0x7f070034;
+        public static final int realposition=0x7f07003d;
+        public static final int result=0x7f07002b;
         public static final int satellite=0x7f070002;
-        public static final int selectedButton=0x7f07002e;
-        public static final int spinner1=0x7f07000c;
-        public static final int tVis=0x7f070031;
-        public static final int tdComments=0x7f070033;
-        public static final int tdDifficulty=0x7f07002d;
+        public static final int seekDistance=0x7f070026;
+        public static final int seekDistanceTxt=0x7f070009;
+        public static final int selectedButton=0x7f070036;
+        public static final int tVis=0x7f070039;
+        public static final int tdComments=0x7f07003b;
+        public static final int tdDifficulty=0x7f070035;
         public static final int tdDuration=0x7f07001e;
-        public static final int tdNbCoords=0x7f07002f;
-        public static final int tdPosition=0x7f070030;
+        public static final int tdNbCoords=0x7f070037;
+        public static final int tdPosition=0x7f070038;
         public static final int tdSummary=0x7f07001f;
         public static final int terrain=0x7f070003;
         public static final int textView1=0x7f070005;
         public static final int textView2=0x7f070006;
-        public static final int textView3=0x7f070009;
         public static final int textView4=0x7f07000b;
-        public static final int track_edit_button=0x7f070036;
+        public static final int track_edit_button=0x7f07003e;
         public static final int track_edit_title=0x7f070018;
+        public static final int traveled=0x7f070028;
         public static final int tvDifficulty=0x7f07001a;
         public static final int tvDuration=0x7f07001d;
-        public static final int tvNbCoords=0x7f070032;
+        public static final int tvNbCoords=0x7f07003a;
         public static final int tv_location=0x7f070013;
-        public static final int tvposition=0x7f070034;
-        public static final int typeChoice=0x7f070021;
+        public static final int tvposition=0x7f07003c;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f090000;
@@ -323,24 +332,25 @@ containing a value of this type.
         public static final int createinfo_fragment=0x7f030007;
         public static final int createmap_fragment=0x7f030008;
         public static final int createtab_viewer=0x7f030009;
-        public static final int displaylist_fragment=0x7f03000a;
-        public static final int displaymap_fragment=0x7f03000b;
-        public static final int displaytab_viewer=0x7f03000c;
-        public static final int editinfo_fragment=0x7f03000d;
-        public static final int editmap_fragment=0x7f03000e;
-        public static final int edittab_viewer=0x7f03000f;
-        public static final int maps=0x7f030010;
-        public static final int mytracks=0x7f030011;
-        public static final int new_track=0x7f030012;
-        public static final int picklist_fragment=0x7f030013;
-        public static final int pickmap_fragment=0x7f030014;
-        public static final int picktab_viewer=0x7f030015;
-        public static final int prompts=0x7f030016;
-        public static final int selected_track=0x7f030017;
-        public static final int track_detail=0x7f030018;
-        public static final int track_edit=0x7f030019;
-        public static final int track_list=0x7f03001a;
-        public static final int track_row=0x7f03001b;
+        public static final int displayfilter_fragment=0x7f03000a;
+        public static final int displaylist_fragment=0x7f03000b;
+        public static final int displaymap_fragment=0x7f03000c;
+        public static final int displaytab_viewer=0x7f03000d;
+        public static final int editinfo_fragment=0x7f03000e;
+        public static final int editmap_fragment=0x7f03000f;
+        public static final int edittab_viewer=0x7f030010;
+        public static final int maps=0x7f030011;
+        public static final int mytracks=0x7f030012;
+        public static final int new_track=0x7f030013;
+        public static final int picklist_fragment=0x7f030014;
+        public static final int pickmap_fragment=0x7f030015;
+        public static final int picktab_viewer=0x7f030016;
+        public static final int prompts=0x7f030017;
+        public static final int selected_track=0x7f030018;
+        public static final int track_detail=0x7f030019;
+        public static final int track_edit=0x7f03001a;
+        public static final int track_list=0x7f03001b;
+        public static final int track_row=0x7f03001c;
     }
     public static final class menu {
         public static final int about=0x7f0d0000;
@@ -357,6 +367,7 @@ containing a value of this type.
         public static final int button_30=0x7f050000;
     }
     public static final class string {
+        public static final int Geolocation=0x7f080033;
         public static final int action_settings=0x7f08001b;
         public static final int app_name=0x7f08001a;
         /**   Title for notification shown when GooglePlayServices needs to be
@@ -461,27 +472,27 @@ containing a value of this type.
         public static final int menu_edit=0x7f080021;
         public static final int menu_insert=0x7f08001f;
         public static final int no_tracks=0x7f08001e;
-        public static final int pref_default_display_name=0x7f080038;
-        public static final int pref_description_social_recommendations=0x7f080036;
+        public static final int pref_default_display_name=0x7f080039;
+        public static final int pref_description_social_recommendations=0x7f080037;
         /**  Example settings for Data & Sync 
          */
-        public static final int pref_header_data_sync=0x7f08003a;
+        public static final int pref_header_data_sync=0x7f08003b;
         /**  Strings related to Settings 
  Example General settings 
          */
-        public static final int pref_header_general=0x7f080034;
+        public static final int pref_header_general=0x7f080035;
         /**  Example settings for Notifications 
          */
-        public static final int pref_header_notifications=0x7f08003d;
-        public static final int pref_ringtone_silent=0x7f080040;
-        public static final int pref_title_add_friends_to_messages=0x7f080039;
-        public static final int pref_title_display_name=0x7f080037;
-        public static final int pref_title_new_message_notifications=0x7f08003e;
-        public static final int pref_title_ringtone=0x7f08003f;
-        public static final int pref_title_social_recommendations=0x7f080035;
-        public static final int pref_title_sync_frequency=0x7f08003b;
-        public static final int pref_title_system_sync_settings=0x7f08003c;
-        public static final int pref_title_vibrate=0x7f080041;
+        public static final int pref_header_notifications=0x7f08003e;
+        public static final int pref_ringtone_silent=0x7f080041;
+        public static final int pref_title_add_friends_to_messages=0x7f08003a;
+        public static final int pref_title_display_name=0x7f080038;
+        public static final int pref_title_new_message_notifications=0x7f08003f;
+        public static final int pref_title_ringtone=0x7f080040;
+        public static final int pref_title_social_recommendations=0x7f080036;
+        public static final int pref_title_sync_frequency=0x7f08003c;
+        public static final int pref_title_system_sync_settings=0x7f08003d;
+        public static final int pref_title_vibrate=0x7f080042;
         public static final int tDifficulty=0x7f080027;
         public static final int tDuration=0x7f080029;
         public static final int tNbCoords=0x7f080028;
@@ -490,7 +501,7 @@ containing a value of this type.
         public static final int title_activity_account=0x7f08002d;
         public static final int title_activity_home=0x7f08002c;
         public static final int title_activity_my_tracks=0x7f08002f;
-        public static final int title_activity_settings=0x7f080033;
+        public static final int title_activity_settings=0x7f080034;
         public static final int track_description=0x7f080023;
         public static final int track_edit_confirm=0x7f080026;
         public static final int track_edit_summary=0x7f080025;

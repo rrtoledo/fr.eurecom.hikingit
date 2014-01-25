@@ -48,16 +48,15 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 		OnMarkerClickListener, OnMapLongClickListener {
 
 	private double marginRefresh = 5;
-	private double margin = 10;
 
 	private double nonRefreshArea[] = { 0, 0, 0, 0 };
-	
+
 	private Location location;
 	private LatLng latLng;
 	private double longitude;
 	private double latitude;
 	private Marker myMarker;
-	
+
 	LocationManager locationManager;
 	LocationListener locationListener;
 
@@ -79,6 +78,13 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 	TextView tvLocInfo;
 	boolean markerClicked = true;
 
+	// Filter variables
+	int category = 0;
+	int order = 1;
+	double margin = 10;
+	boolean near = true;
+	String traveled = "0";
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -86,12 +92,13 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 		View rootView = inflater.inflate(R.layout.displaymap_fragment,
 				container, false);
 
-		googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.dmf_map)).getMap();
-		
+		googleMap = ((SupportMapFragment) getFragmentManager()
+				.findFragmentById(R.id.dmf_map)).getMap();
+
 		googleMap.setMyLocationEnabled(true);
 
-		locationManager = (LocationManager) getActivity()
-				.getSystemService(Context.LOCATION_SERVICE);
+		locationManager = (LocationManager) getActivity().getSystemService(
+				Context.LOCATION_SERVICE);
 
 		// Creating a criteria object to retrieve provider
 		Criteria criteria = new Criteria();
@@ -112,7 +119,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			latLng = new LatLng(latitude, longitude);
 			googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 			googleMap.animateCamera(CameraUpdateFactory.zoomTo(8));
-			
+
 			nonRefreshArea[0] = latitude - marginRefresh;
 			nonRefreshArea[1] = latitude + marginRefresh;
 			nonRefreshArea[2] = longitude - marginRefresh;
@@ -134,9 +141,16 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			locationListener = new LocationListener() {
 
 				public void onLocationChanged(Location location) {
-					Log.w("fr.eurecom.hikingit", " onLocationChanged");
+					Log.w("fr.eurecom.hikingit", "Map onLocationChanged");
+					latitude = location.getLatitude();
+					longitude = location.getLongitude();
+					latLng = new LatLng(latitude, longitude);
+					googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+					googleMap.animateCamera(CameraUpdateFactory.zoomTo(8));
 
 					Log.w("fr.eurecom.hikingit", "my position pinned");
+					myMarker.remove();
+					Log.w("fr.eurecom.hikingit", "myMarker removed");
 					// redraw the marker when get location update.
 					if (location.getLatitude() < nonRefreshArea[0]
 							|| location.getLatitude() > nonRefreshArea[1]
@@ -158,7 +172,8 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 
 				@Override
 				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
+					// if the provider is disabled, we look for any track
+					near = false;
 
 				}
 
@@ -175,21 +190,35 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 
 				}
 			};
+			if (!locationManager
+					.isProviderEnabled(LocationManager.GPS_PROVIDER))
+				near = false;
+			else {
+				Log.w("fr.eurecom.hikingit", "MapFragment first lookUp 10000");
 
-			Log.w("fr.eurecom.hikingit", "MapFragment first lookUp 10000");
-			locationManager.requestLocationUpdates(provider, 10000, 0,
-					locationListener);
+				locationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, 10000, 0,
+						locationListener);
+			}
 		} else {
-			Toast.makeText(getActivity().getApplicationContext(), "No location",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getApplicationContext(),
+					"No location", Toast.LENGTH_LONG).show();
 		}
-		
-    	return rootView;
+
+		return rootView;
 	}
 
 	public void onLocationChanged(Location location) {
 		// redraw the marker when get location update.
-		Log.w("fr.eurecom.hikingit", " onLocationChanged override");
+		Log.w("fr.eurecom.hikingit", "Map onLocationChanged override");
+		latitude = location.getLatitude();
+		longitude = location.getLongitude();
+		latLng = new LatLng(latitude, longitude);
+		googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+		googleMap.animateCamera(CameraUpdateFactory.zoomTo(8));
+
+		myMarker.remove();
+		Log.w("fr.eurecom.hikingit", "myMarker removed");
 		if (location.getLatitude() < nonRefreshArea[0]
 				|| location.getLatitude() > nonRefreshArea[1]
 				|| location.getLongitude() < nonRefreshArea[2]
@@ -225,10 +254,6 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 
 	private void drawMarker(Location loc) {
 		Log.w("fr.eurecom.hikingit", "draw marker called");
-		Log.w("fr.eurecom.hikingit", "draw marker first loc "
-				+ myMarker.getPosition().toString());
-		myMarker.remove();
-		Log.w("fr.eurecom.hikingit", "myMarker removed");
 		LatLng currentPosition = new LatLng(loc.getLatitude(),
 				loc.getLongitude());
 		myMarker = googleMap.addMarker(new MarkerOptions()
@@ -237,22 +262,11 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 						"Lat:" + loc.getLatitude() + "Lng:"
 								+ loc.getLongitude())
 				.icon(BitmapDescriptorFactory
-							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 				.title("ME"));
 		Log.w("fr.eurecom.hikingit", "draw marker second loc "
 				+ myMarker.getPosition().toString());
 		Log.w("fr.eurecom.hikingit", "myMarker added");
-	}
-
-	public void onProviderDisabled(String provider) {
-	}
-
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -276,8 +290,8 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			startActivity(i);
 			return true;
 		} else {
-			Toast.makeText(getActivity().getApplicationContext(), "Press a track",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getApplicationContext(),
+					"Press a track", Toast.LENGTH_LONG).show();
 			return false;
 		}
 	}
@@ -294,38 +308,7 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			Log.w("fr.eurecom.hikingit",
 					"listVect cleared " + listVect.toString());
 		}
-
-		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
-				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
-				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
-				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
-				TrackTable.COLUMN_STARTY, TrackTable.COLUMN_FLAGS,
-				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP,
-				TrackTable.COLUMN_PIC };
-
-		String selection = "flags = ? or flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
-
-		double limitMaxX = latitude + margin;
-		String lttdMax = String.valueOf(limitMaxX);
-		Log.w("fr.eurecom.fr", "latitude max : " + lttdMax);
-
-		double limitMinX = latitude - margin;
-		String lttdMin = String.valueOf(limitMinX);
-		Log.w("fr.eurecom.fr", "latitude min : " + lttdMin);
-
-		double limitMaxY = longitude + margin;
-		String lgtdMax = String.valueOf(limitMaxY);
-		Log.w("fr.eurecom.fr", "longitude max : " + lgtdMax);
-
-		double limitMinY = longitude - margin;
-		String lgtdMin = String.valueOf(limitMinY);
-		Log.w("fr.eurecom.fr", "longitude min : " + lgtdMin);
-
-		String[] selectionArgs = { "1","3", lttdMax, lttdMin, lgtdMax, lgtdMin };
-		String order = "";
-		Cursor cursor = getActivity().getContentResolver().query(
-				TrackContentProvider.CONTENT_URI, projection, selection,
-				selectionArgs, order);
+		Cursor cursor = getCursor();
 		if (cursor == null)
 			Log.w("fr.eurecom.fr", "No cursor at all");
 		if (cursor != null && cursor.moveToFirst()) {
@@ -341,7 +324,6 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 				int id = Integer.valueOf(cursor.getString(cursor
 						.getColumnIndexOrThrow(TrackTable.COLUMN_ID)));
 				Log.w("fr.eurecom.fr", "track id " + id);
-				// idTrack.add(id);
 
 				String titleTrack = cursor.getString(cursor
 						.getColumnIndexOrThrow(TrackTable.COLUMN_TITLE));
@@ -390,10 +372,13 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 
 					if (j == 0) {
 						Log.w("fr.eurecom.hikingit", j + " marker numero " + i);
-						googleMap.addMarker(new MarkerOptions()
-								.position(latlong).title(titleTrack)
-								.icon(BitmapDescriptorFactory.fromResource(R.drawable.displaymarker))
-								.snippet(Integer.toString(id)));
+						googleMap
+								.addMarker(new MarkerOptions()
+										.position(latlong)
+										.title(titleTrack)
+										.icon(BitmapDescriptorFactory
+												.fromResource(R.drawable.displaymarker))
+										.snippet(Integer.toString(id)));
 						Log.w("fr.eurecom.hikingit", "marker ajoute");
 					}
 
@@ -410,12 +395,10 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 			cursor.close();
 		} else {
 			Log.w("fr.eurecom.fr", "no cursor");
-			Toast.makeText(getActivity(), "No cursor",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), "No cursor", Toast.LENGTH_LONG)
+					.show();
 		}
 	}
-	
-	
 
 	public void drawLine(int a) {
 		Log.w("fr.eurecom.fr", "drawline, vecteur de taille  "
@@ -446,16 +429,140 @@ public class DisplayMapFragment extends Fragment implements OnMapClickListener,
 					"polyline created " + polyline.toString());
 		}
 	}
-	
-	public void onPause(){
+
+	public void onPause() {
 		super.onPause();
-		Log.w("fr.eurecom.hiking","Map onPause");
+		Log.w("fr.eurecom.hiking", "------------- Map onPause");
+		if (locationListener != null)
+			locationManager.removeUpdates(locationListener);
 	}
-	
-	public void onStop(){
+
+	public void onStop() {
 		super.onStop();
-		Log.w("fr.eurecom.hiking","Map onStop");
-		locationManager.removeUpdates(locationListener);
+		Log.w("fr.eurecom.hiking", "------------- Map onStop");
+		if (locationListener != null)
+			locationManager.removeUpdates(locationListener);
 	}
-	
+
+	public void onStart() {
+		super.onStart();
+		Log.w("fr.eurecom.hiking", "------------- Map onStart");
+	}
+
+	public void onResume() {
+		super.onResume();
+		Log.w("fr.eurecom.hiking", "------------- Map onResume");
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			near = false;
+			if (locationListener != null)
+				locationManager.removeUpdates(locationListener);
+		} else {
+			if (locationListener != null)
+				locationManager
+						.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+								5000, 0, locationListener);
+		}
+	}
+
+	public void getFilter(int cat, int ord, int dist, boolean close, String trav) {
+		Log.w("fr.eurecom.hiking", "Map getFilter called");
+		Log.w("fr.eurecom.hiking", "Map Received : category "+cat+", order "+ord+", distance "+dist+", near "+close);
+		category = cat;
+		order = ord;
+		margin = (double) dist/110;
+		near = close;
+		traveled = trav;
+		Log.w("fr.eurecom.hiking", "Map Saved : category "+category+", order "+order+", distance "+margin+", near "+near);
+		fillData();
+	}
+
+	public Cursor getCursor() {
+		Log.w("fr.eurecom.hiking", "Map getCursor called");
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
+				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
+				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
+				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
+				TrackTable.COLUMN_STARTY, TrackTable.COLUMN_FLAGS,
+				TrackTable.COLUMN_TRAVELED,	TrackTable.COLUMN_SCORE,
+				TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC };
+
+		String groupBy = "";
+		switch (order) {
+		case 0:
+			groupBy = "difficulty"; // proximity must be implemented
+			break;
+		case 1:
+			groupBy = "duration";
+			break;
+		case 2:
+			groupBy = "name";
+			break;
+		default:
+			groupBy = "difficulty";
+			break;
+		}
+
+		String selection = getSelection();
+		String[] selectionArgs = getSelectionArgs();
+		Log.w("fr.eurecom.hiking", "Map getFilter args : selection "
+				+ selection + ", category " + category);
+		Cursor cursor = getActivity().getContentResolver().query(
+				TrackContentProvider.CONTENT_URI, projection, selection,
+				selectionArgs, groupBy);
+		return cursor;
+	}
+
+	public String getSelection() {
+		String selection;
+		if (near) {
+			if (category == 0)
+				selection = "traveled = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
+			else
+				selection = "flags = ? AND traveled = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
+
+		} else {
+			if (category == 0)
+				selection = "traveled = ?";
+			else
+				selection = "flags = ? AND traveled = ?";
+		}
+		return selection;
+	}
+
+	public String[] getSelectionArgs() {
+		if (near) {
+			double limitMaxX = latitude + margin;
+			String lttdMax = String.valueOf(limitMaxX);
+			Log.w("fr.eurecom.fr", "latitude max : " + lttdMax);
+
+			double limitMinX = latitude - margin;
+			String lttdMin = String.valueOf(limitMinX);
+			Log.w("fr.eurecom.fr", "latitude min : " + lttdMin);
+
+			double limitMaxY = longitude + margin;
+			String lgtdMax = String.valueOf(limitMaxY);
+			Log.w("fr.eurecom.fr", "longitude max : " + lgtdMax);
+
+			double limitMinY = longitude - margin;
+			String lgtdMin = String.valueOf(limitMinY);
+			Log.w("fr.eurecom.fr", "longitude min : " + lgtdMin);
+
+			if (category == 0) {
+				String[] args1 = { traveled, lttdMax, lttdMin, lgtdMax, lgtdMin };
+				return args1;
+			} else {
+				String[] args1 = { String.valueOf(category), traveled, lttdMax, lttdMin,
+						lgtdMax, lgtdMin };
+				return args1;
+			}
+		} else {
+			if (category == 0) {
+				String[] args1 = {traveled};
+				return args1;
+			} else {
+				String[] args1 = { String.valueOf(category), traveled };
+				return args1;
+			}
+		}
+	}
 }

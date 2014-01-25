@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+        android:gravity="center"
+        android:text="Geolocation"
+        android:textSize="20dip" />
+
+    <Switch
+        android:id="@+id/GeoEnable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="true"
+        android:text="Enable" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dip" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="30dip"
+            android:text="Display tracks :"
+            android:textSize="15dip" />
+
+        <RadioGroup
+            android:id="@+id/groupDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/nearMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:checked="true"
+                android:text="Near me" />
+
+            <RadioButton
+                android:id="@+id/any"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Any" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dip" >
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="2dip"
+            android:text="Distance :"
+            android:textSize="15dip" />
+
+        <TextView
+            android:id="@+id/seekDistanceTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="25dip"
+            android:text="00 km" />
+
+        <SeekBar
+            android:id="@+id/seekDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="50" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="30dip"
+        android:gravity="center"
+        android:text="Category"
+        android:textSize="20dip" />
+
+    <Spinner
+        android:id="@+id/filterCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:entries="@array/display" />
+
+    <CheckBox
+        android:id="@+id/traveled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Traveled" />
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="30dip"
+        android:gravity="center"
+        android:text="Order by"
+        android:textSize="20dip" />
+
+    <Spinner
+        android:id="@+id/filterOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/order" />
+
+</LinearLayout>

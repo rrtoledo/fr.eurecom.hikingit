@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.id;
 import fr.eurecom.hikingit.R.layout;

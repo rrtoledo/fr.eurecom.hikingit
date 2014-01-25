@@ -55,28 +55,30 @@ public class DisplayListFragment extends Fragment implements
 	private Location location;
 	private double longitude;
 	private double latitude;
-	private double margin = 5;
 	private double nonRefreshArea[] = { 0, 0, 0, 0 };
 	private double marginRefresh = 10;
-	private int trackIds;
 	private ListView listView;
-	private Spinner spinner;
-	private RadioGroup radio;
-	private RadioButton nearButton;
-	private RadioButton allButton;
 	private TextView text;
+	// Filter variables
+	int category = 0;
+	int order = 0;
+	double margin = 10;
+	boolean near = true;
+	String traveled = "0";
 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	};
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+		Log.v("fr.eurecom/hikingit", "List onCreateView");
 		View rootView = inflater.inflate(R.layout.displaylist_fragment,
 				container, false);
 
 		text = (TextView) rootView.findViewById(R.id.result);
-		nearButton = (RadioButton) rootView.findViewById(R.id.RbNear);
-		allButton = (RadioButton) rootView.findViewById(R.id.RbAll);
 
 		listView = (ListView) rootView.findViewById(R.id.dlf_listview);
 		registerForContextMenu(listView);
@@ -86,7 +88,8 @@ public class DisplayListFragment extends Fragment implements
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Log.v("fr.eurecom/hikingit", "DLF onItemClick");
-				Intent i = new Intent(getActivity(), SelectedTrackActivity.class);
+				Intent i = new Intent(getActivity(),
+						SelectedTrackActivity.class);
 				Uri trackUri = Uri.parse(TrackContentProvider.CONTENT_URI + "/"
 						+ id);
 				i.putExtra(TrackContentProvider.CONTENT_ITEM_TYPE, trackUri);
@@ -95,58 +98,31 @@ public class DisplayListFragment extends Fragment implements
 			}
 		});
 
-		spinner = (Spinner) rootView.findViewById(R.id.typeChoice);
-		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				fillData();
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
-
-		radio = (RadioGroup) rootView.findViewById(R.id.radioChoice);
-		radio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(RadioGroup arg0, int arg1) {
-				Log.w("fr.eurecom.hikingit",
-						"Radio changed " + radio.getCheckedRadioButtonId());
-				fillData();
-			}
-
-		});
-
 		locationListener = new mylocationlistener();
-
+		Log.v("fr.eurecom/hikingit", "List ll created");
 		locationManager = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
-
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			allButton.setChecked(true);
-			nearButton.setClickable(false);
-		}
-
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				10000, 0, locationListener);
+		Log.v("fr.eurecom/hikingit", "List lm created");
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+			near = false;
+		else
+			locationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
 
 		// Creating a criteria object to retrieve provider
 		Criteria criteria = new Criteria();
 
 		// Getting the name of the best provider
 		String provider = locationManager.getBestProvider(criteria, true);
-
+		Log.v("fr.eurecom/hikingit", "List provider created");
+		
 		// Getting Current Location
 		location = locationManager.getLastKnownLocation(provider);
-
+		
 		if (location != null) {
 			longitude = location.getLongitude();
 			latitude = location.getLatitude();
-			Log.w("fr.eurecom.hikingit", "location initialized " + latitude
+			Log.w("fr.eurecom.hikingit", "List : location initialized " + latitude
 					+ " " + longitude);
 			nonRefreshArea[0] = (latitude - marginRefresh);
 			nonRefreshArea[1] = (latitude + marginRefresh);
@@ -156,6 +132,10 @@ public class DisplayListFragment extends Fragment implements
 					"ListFragment calling fillData beginning");
 			fillData();
 		}
+		// } else
+		{
+			// popup ask for enabling ...
+		}
 		// registerForContextMenu(listView);
 		return rootView;
 	}
@@ -163,12 +143,12 @@ public class DisplayListFragment extends Fragment implements
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);	
+		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
-		if(spinner.getSelectedItemPosition()==2)
-			menu.add(0, EDIT_ID, 0, R.string.menu_edit);
+		// if (spinner.getSelectedItemPosition() == 2) // if (categorySelected =
+		// "2")
+		menu.add(0, EDIT_ID, 0, R.string.menu_edit);
 	}
-
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -210,134 +190,61 @@ public class DisplayListFragment extends Fragment implements
 		// Fields from the database (projection)
 		// Must include the _id column for the adapter to work
 
-		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
-				TrackTable.COLUMN_DIFFICULTY };
-
-		int select = Integer.valueOf((int) spinner.getSelectedItemId() + 1);
-
-		String radioId = Integer.toString(radio.getCheckedRadioButtonId());
-
-		String order = "difficulty";
-
-		Cursor cursor = null;
-
-		if (nearButton.isChecked()) {
-			Log.w("fr.eurecom.hikingit", "Nearby tracks asked ");
-
-			double limitXMax = latitude + margin;
-			String lttMax = String.valueOf(limitXMax);
-
-			double limitXMin = latitude - margin;
-			String lttMin = String.valueOf(limitXMin);
-
-			double limitYMax = longitude + margin;
-			String lgtMax = String.valueOf(limitYMax);
-
-			double limitYMin = longitude - margin;
-			String lgtMin = String.valueOf(limitYMin);
-
-			if (select == 1) {
-				String selection = "flags = ? OR flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
-				String selectionArgs[] = { Integer.toString(select), "3",
-						lttMax, lttMin, lgtMax, lgtMin };
-				Log.w("fr.eurecom.hikingit", "selection args "
-						+ selectionArgs[1] + " " + selectionArgs[2] + " "
-						+ selectionArgs[3] + " " + selectionArgs[4]);
-
-				cursor = getActivity().getContentResolver().query(
-						TrackContentProvider.CONTENT_URI, projection,
-						selection, selectionArgs, order);
-			}
-
-			else {
-				String selection = "flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
-				String selectionArgs[] = { Integer.toString(select), lttMax,
-						lttMin, lgtMax, lgtMin };
-				Log.w("fr.eurecom.hikingit", "selection args "
-						+ selectionArgs[1] + " " + selectionArgs[2] + " "
-						+ selectionArgs[3] + " " + selectionArgs[4]);
-
-				cursor = getActivity().getContentResolver().query(
-						TrackContentProvider.CONTENT_URI, projection,
-						selection, selectionArgs, order);
-			}
-		} else {
-			if (select == 1) {
-				Log.w("fr.eurecom.hikingit", "All tracks asked " + radioId);
-				String selection = "flags = ? OR flags = ?";
-				String selectionArgs[] = { Integer.toString(select), "3" };
-
-				cursor = getActivity().getContentResolver().query(
-						TrackContentProvider.CONTENT_URI, projection,
-						selection, selectionArgs, order);
-			}
-			else {
-				Log.w("fr.eurecom.hikingit", "All tracks asked " + radioId);
-				String selection = "flags = ?";
-				String selectionArgs[] = { Integer.toString(select) };
-
-				cursor = getActivity().getContentResolver().query(
-						TrackContentProvider.CONTENT_URI, projection,
-						selection, selectionArgs, order);
-			}
-		}
+		Cursor cursor = getCursor();
 
 		if (cursor != null) {
 			Log.w("fr.eurecom.hikingit", " ListFragment : fill data cursor "
-					+ cursor.toString() + " nb answers " + cursor.getCount());
+					+ " nb answers " + cursor.getCount());
+
+			if (cursor.getCount() == 0) {
+				text.setText("No tracks");
+				Log.w("fr.eurecom.hikingit", " ListFragment empty cursor");
+			} else {
+				text.setText("Result :");
+			}
+
+			String[] from = new String[] { TrackTable.COLUMN_TITLE,
+					TrackTable.COLUMN_DIFFICULTY };
+			
+			switch (order) {
+			case 0:
+				from[1]= TrackTable.COLUMN_DIFFICULTY;
+				Log.w("fr.eurecom.hikingit", "order by 0 - diff");
+				break;
+			case 1:
+				from[1]=TrackTable.COLUMN_DURATION;
+				Log.w("fr.eurecom.hikingit", "order by 1 - time");
+				break;
+			case 2:
+				from[1]= TrackTable.COLUMN_LENGTH;
+				Log.w("fr.eurecom.hikingit", "order by 2 - dist");
+				break;
+			case 3:
+				from[1]= TrackTable.COLUMN_DIFFICULTY;
+				Log.w("fr.eurecom.hikingit", "order by 3 - name");
+				break;
+			default:
+				from[1]= TrackTable.COLUMN_DIFFICULTY;
+				Log.w("fr.eurecom.hikingit", "order by default - dur");
+				break;
+			}			
+
+			int[] to = new int[] { R.id.label, R.id.order };
+			
+			adapter = new SimpleCursorAdapter(getActivity()
+					.getApplicationContext(), R.layout.track_row, cursor, from,
+					to, 0);
+
+			listView.setAdapter(adapter);
+
+			Log.w("fr.eurecom.hikingit", " ListFragment adapter called");
 		}
-
-		if (cursor.getCount() == 0) {
-			text.setText("No tracks");
-			Log.w("fr.eurecom.hikingit", " ListFragment empty cursor");
-		} else {
-			text.setText("Result :");
-		}
-
-		String[] from = new String[] { TrackTable.COLUMN_TITLE,
-				TrackTable.COLUMN_DIFFICULTY };
-		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.label, R.id.diff };
-
-		getActivity().getLoaderManager().initLoader(0, null, this);
-
-		adapter = new SimpleCursorAdapter(
-				getActivity().getApplicationContext(), R.layout.track_row,
-				cursor, from, to, 0);
-
-		listView.setAdapter(adapter);
-
-		Log.w("fr.eurecom.hikingit", " ListFragment adapter called");
 	}
 
 	// creates a new loader after the initLoader () call
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
-				TrackTable.COLUMN_DIFFICULTY };
-		if (nearButton.isChecked()) {
-
-		}
-		String selection = "flags = ? or flags = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ?";
-
-		double limitXMax = latitude + margin;
-		String lttMax = String.valueOf(limitXMax);
-
-		double limitXMin = latitude - margin;
-		String lttMin = String.valueOf(limitXMin);
-
-		double limitYMax = longitude + margin;
-		String lgtMax = String.valueOf(limitYMax);
-
-		double limitYMin = longitude - margin;
-		String lgtMin = String.valueOf(limitYMin);
-
-		String[] selectionArgs = { "1", "3", lttMax, lttMin, lgtMax, lgtMin };
-		String order = "difficulty";
-
-		Cursor cursor = getActivity().getContentResolver().query(
-				TrackContentProvider.CONTENT_URI, projection, selection,
-				selectionArgs, order);
+		Cursor cursor = getCursor();
 		if (cursor != null) {
 			Log.w("fr.eurecom.hikingit",
 					"ListFragment : onCreate Loader : cursor "
@@ -348,9 +255,7 @@ public class DisplayListFragment extends Fragment implements
 					"ListFragment : onCreate Loader : empty cursor ");
 		}
 
-		CursorLoader cursorLoader = new CursorLoader(getActivity()
-				.getApplicationContext(), TrackContentProvider.CONTENT_URI,
-				projection, selection, selectionArgs, order);
+		CursorLoader cursorLoader = getCursorLoader();
 		return cursorLoader;
 	}
 
@@ -366,6 +271,7 @@ public class DisplayListFragment extends Fragment implements
 	private class mylocationlistener implements LocationListener {
 		@Override
 		public void onLocationChanged(Location location) {
+			Log.w("fr.eurecom.hiking", "List : New location");
 			if (location.getLatitude() < nonRefreshArea[0]
 					|| location.getLatitude() > nonRefreshArea[1]
 					|| location.getLongitude() < nonRefreshArea[2]
@@ -385,7 +291,8 @@ public class DisplayListFragment extends Fragment implements
 
 		@Override
 		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
+			// If the provider is disabled, we look for any tracks
+			near = false;
 
 		}
 
@@ -401,29 +308,201 @@ public class DisplayListFragment extends Fragment implements
 
 		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (locationManager == null)
+			locationManager = (LocationManager) getActivity().getSystemService(
+					Context.LOCATION_SERVICE);
+		Log.w("fr.eurecom.hiking", "------------- List onResume");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			allButton.setChecked(true);
-			nearButton.setClickable(false);
+			near = false;
+			if (locationListener != null)
+				locationManager.removeUpdates(locationListener);
 		} else {
-			nearButton.setClickable(true);
-			nearButton.setChecked(true);
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+			if (locationListener != null)
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
 		}
 	}
-	
-	public void onPause(){
+
+	public void onPause() {
 		super.onPause();
-		Log.w("fr.eurecom.hiking","List onPause");
+		Log.w("fr.eurecom.hiking", "------------- List onPause");
+		if (locationListener != null)
+		{
+			Log.w("fr.eurecom.hiking", " ll exist ");
+			if (locationManager != null)
+			{
+				Log.w("fr.eurecom.hiking", " lm exist ");
+				locationManager.removeUpdates(locationListener);
+				locationManager = null;
+			}	
+		}
 	}
-	
-	public void onStop(){
+
+	public void onStop() {
 		super.onStop();
-		Log.w("fr.eurecom.hiking","List onStop");
-		locationManager.removeUpdates(locationListener);
+		Log.w("fr.eurecom.hiking", "------------- List onStop");
+		if (locationListener != null && locationManager !=null)
+		{
+			locationManager.removeUpdates(locationListener);
+			Log.w("fr.eurecom.hiking", "ll exist");
+			locationManager = null;
+		}
+	}
+
+	public void onStart() {
+		super.onStart();
+		Log.w("fr.eurecom.hiking", "------------- List onStart");
+	}
+
+	public void getFilter(int cat, int ord, int dist, boolean close, String trav) {
+		Log.w("fr.eurecom.hiking", "List getFilter called");
+		Log.w("fr.eurecom.hiking", "Received : category "+cat+", order "+ord+", distance "+dist+", near "+close);
+		category = cat;
+		order = ord;
+		margin = (double) dist/110;
+		near = close;
+		traveled = trav;
+		Log.w("fr.eurecom.hiking", "Saved : category "+category+", order "+order+", distance "+margin+", near "+near);
+		fillData();
+	}
+
+	public Cursor getCursor() {
+		Log.w("fr.eurecom.hiking", "List getCursor called");
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
+				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DIFFICULTY };
+
+		String groupBy = "";
+		switch (order) {
+		case 0:
+			groupBy = "difficulty";
+			projection[2]= TrackTable.COLUMN_DIFFICULTY;
+			break;
+		case 1:
+			groupBy = "duration";
+			projection[2]=TrackTable.COLUMN_DURATION;
+			break;
+		case 2:
+			groupBy = "length";
+			projection[2]= TrackTable.COLUMN_LENGTH;
+			break;
+		case 3:
+			groupBy = "title";
+			projection[2]= TrackTable.COLUMN_TITLE;
+			break;
+		default:
+			groupBy = "difficulty";
+			projection[2]= TrackTable.COLUMN_DIFFICULTY;
+			break;
+		}
+
+		String selection = getSelection();
+		String[] selectionArgs = getSelectionArgs();
+		Log.w("fr.eurecom.hiking", "List getCursor args : selection "
+				+ selection + ", category " + category);
+		Cursor cursor = getActivity().getContentResolver().query(
+				TrackContentProvider.CONTENT_URI, projection, selection,
+				selectionArgs, groupBy);
+		return cursor;
+	}
+
+	public CursorLoader getCursorLoader() {
+		Log.w("fr.eurecom.hiking", "List getCursorLoader called");
+		String[] projection = { TrackTable.COLUMN_ID, TrackTable.COLUMN_TITLE,
+				TrackTable.COLUMN_DIFFICULTY };
+
+		String groupBy = "";
+		switch (order) {
+		case 0:
+			groupBy = "difficulty";
+			projection[2]= TrackTable.COLUMN_DIFFICULTY;
+			break;
+		case 1:
+			groupBy = "duration";
+			projection[2]=TrackTable.COLUMN_DURATION;
+			break;
+		case 2:
+			groupBy = "length";
+			projection[2]= TrackTable.COLUMN_LENGTH;
+			break;
+		case 3:
+			groupBy = "title";
+			projection[2]= TrackTable.COLUMN_TITLE;
+			break;
+		default:
+			groupBy = "difficulty";
+			projection[2]= TrackTable.COLUMN_DIFFICULTY;
+			break;
+		}
+		Log.w("fr.eurecom.hiking","List getCursorLoader : groupby"+groupBy+" , "+projection[2].toString());
+		String selection = getSelection();
+		String[] selectionArgs = getSelectionArgs();
+		Log.w("fr.eurecom.hiking", "List getCursorLoader : selection "
+				+ selection + ", category " + category);
+
+		CursorLoader cursorLoader = new CursorLoader(getActivity()
+				.getApplicationContext(), TrackContentProvider.CONTENT_URI,
+				projection, selection, selectionArgs, groupBy);
+		Log.w("fr.eurecom.hiking", "CursorLoader created");
+		return cursorLoader;
+	}
+
+	public String getSelection() {
+		String selection;
+		if (near) {
+			Log.w("fr.eurecom.hikingit", "List : getSelection : near true");
+			if (category == 0)
+				selection = "traveled = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
+			else
+				selection = "flags = ? AND traveled = ? AND startX < ? AND startX > ? AND startY < ? AND startY > ? ";
+
+		} else {
+			Log.w("fr.eurecom.hikingit", "List : getSelection : near false");
+
+			if (category == 0)
+				selection = "traveled = ?";
+			else
+				selection = "flags = ? AND traveled = ?";
+		}
+		return selection;
+	}
+
+	public String[] getSelectionArgs() {
+		if (near) {
+			double limitMaxX = latitude + margin;
+			String lttdMax = String.valueOf(limitMaxX);
+			Log.w("fr.eurecom.fr", "latitude max : " + lttdMax);
+
+			double limitMinX = latitude - margin;
+			String lttdMin = String.valueOf(limitMinX);
+			Log.w("fr.eurecom.fr", "latitude min : " + lttdMin);
+
+			double limitMaxY = longitude + margin;
+			String lgtdMax = String.valueOf(limitMaxY);
+			Log.w("fr.eurecom.fr", "longitude max : " + lgtdMax);
+
+			double limitMinY = longitude - margin;
+			String lgtdMin = String.valueOf(limitMinY);
+			Log.w("fr.eurecom.fr", "longitude min : " + lgtdMin);
+
+			if (category == 0) {
+				String[] args1 = {traveled, lttdMax, lttdMin, lgtdMax, lgtdMin };
+				return args1;
+			} else {
+				String[] args1 = {String.valueOf(category), traveled, lttdMax, lttdMin,
+						lgtdMax, lgtdMin };
+				return args1;
+			}
+		} else {
+			if (category == 0) {
+				String[] args1 = {traveled};
+				return args1;
+			} else {
+				String[] args1 = {String.valueOf(category), traveled};
+				return args1;
+			}
+		}
 	}
 }

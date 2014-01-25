@@ -309,7 +309,7 @@ public class PickListFragment extends Fragment implements
 		String[] from = new String[] { TrackTable.COLUMN_TITLE,
 				TrackTable.COLUMN_DIFFICULTY };
 		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.label, R.id.diff };
+		int[] to = new int[] { R.id.label, R.id.order };
 
 		getActivity().getLoaderManager().initLoader(0, null, this);
 

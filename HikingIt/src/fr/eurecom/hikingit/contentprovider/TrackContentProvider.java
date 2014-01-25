@@ -173,11 +173,11 @@ public class TrackContentProvider extends ContentProvider {
   private void checkColumns(String[] projection) {
     String[] available = { TrackTable.COLUMN_ID,
     		TrackTable.COLUMN_TITLE, TrackTable.COLUMN_SUMMARY,
-    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_DIFFICULTY,
+    		TrackTable.COLUMN_DURATION, TrackTable.COLUMN_LENGTH, TrackTable.COLUMN_DIFFICULTY,
     		TrackTable.COLUMN_NBCOORDS, TrackTable.COLUMN_COORDS,
     		TrackTable.COLUMN_STARTX, TrackTable.COLUMN_STARTY,
-    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_SCORE,
-    		TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
+    		TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_TRAVELED, 
+    		TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC};
     
     
     if (projection != null) {

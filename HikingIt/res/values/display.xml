@@ -2,8 +2,8 @@
 <resources>
 
     <string-array name="display">
-        <item>Saved tracks</item>
-        <item>Traveled tracks</item>
+        <item>Any track</item>
+        <item>Favorite tracks</item>
         <item>Created tracks</item>
     </string-array>
 

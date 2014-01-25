@@ -26,6 +26,7 @@
     <string name="dlf_s_nearme">Near</string>
     <string name="dlf_s_all">All</string>
     <string name="tv_about">Track It is an Android application implemented by the eponyme team which spent time on it but also laughing, having barbecues and watching South Park shows. We all hope you will like it, and even share it.</string>
+    <string name="Geolocation">Geolocation</string>
     
 
 </resources>

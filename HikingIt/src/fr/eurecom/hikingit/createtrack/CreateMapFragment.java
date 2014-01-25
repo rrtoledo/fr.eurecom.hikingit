@@ -3,7 +3,6 @@ package fr.eurecom.hikingit.createtrack;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.drawable;
 import fr.eurecom.hikingit.R.id;

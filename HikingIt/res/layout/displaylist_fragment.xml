@@ -10,33 +10,6 @@
         android:layout_marginBottom="10dip"
         android:orientation="horizontal" >
 
-        <Spinner
-            android:id="@+id/typeChoice"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="0.91"
-            android:entries="@array/display" />
-
-        <RadioGroup
-            android:id="@+id/radioChoice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.91" >
-
-            <RadioButton
-                android:id="@+id/RbNear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/dlf_s_nearme" />
-
-            <RadioButton
-                android:id="@+id/RbAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dlf_s_all" />
-        </RadioGroup>
-
     </LinearLayout>
 
     <TextView

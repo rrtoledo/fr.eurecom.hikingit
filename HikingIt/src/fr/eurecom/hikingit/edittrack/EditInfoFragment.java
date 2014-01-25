@@ -19,12 +19,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.id;
 import fr.eurecom.hikingit.R.layout;
 import fr.eurecom.hikingit.R.menu;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
+import fr.eurecom.hikingit.createtrack.OnFragmentClickListener;
 import fr.eurecom.hikingit.database.TrackTable;
 
 public class EditInfoFragment extends Fragment {

@@ -78,12 +78,11 @@ public class TrackEditDetailActivity extends Activity {
 
 	private void fillData(Uri uri) {
 		String[] projection = { TrackTable.COLUMN_TITLE,
-				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION,
+				TrackTable.COLUMN_SUMMARY, TrackTable.COLUMN_DURATION, TrackTable.COLUMN_LENGTH,
 				TrackTable.COLUMN_DIFFICULTY, TrackTable.COLUMN_NBCOORDS,
 				TrackTable.COLUMN_COORDS, TrackTable.COLUMN_STARTX,
-				TrackTable.COLUMN_STARTY, TrackTable.COLUMN_FLAGS,
-				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP,
-				TrackTable.COLUMN_PIC };
+				TrackTable.COLUMN_STARTY, TrackTable.COLUMN_FLAGS, TrackTable.COLUMN_TRAVELED,
+				TrackTable.COLUMN_SCORE, TrackTable.COLUMN_REP, TrackTable.COLUMN_PIC };
 
 		Cursor cursor = getContentResolver().query(uri, projection, null, null,
 				null);
@@ -170,6 +169,8 @@ public class TrackEditDetailActivity extends Activity {
 
 		String coords = mPos.getText().toString();
 		String flags = mVis.getText().toString();
+		String length = "0";
+		String traveled = "0";
 		
 		
 		int index=0;
@@ -199,12 +200,14 @@ public class TrackEditDetailActivity extends Activity {
 		values.put(TrackTable.COLUMN_TITLE, title);
 		values.put(TrackTable.COLUMN_SUMMARY, summary);
 		values.put(TrackTable.COLUMN_DURATION, duration);
+		values.put(TrackTable.COLUMN_LENGTH, length);
 		values.put(TrackTable.COLUMN_DIFFICULTY, difficulty);
 		values.put(TrackTable.COLUMN_NBCOORDS, nbcoords);
 		values.put(TrackTable.COLUMN_COORDS, coords);
 		values.put(TrackTable.COLUMN_STARTX, startX);
 		values.put(TrackTable.COLUMN_STARTY, startY);
 		values.put(TrackTable.COLUMN_FLAGS, flags);
+		values.put(TrackTable.COLUMN_TRAVELED, traveled);
 		values.put(TrackTable.COLUMN_SCORE, score);
 		values.put(TrackTable.COLUMN_REP, rep);
 		values.put(TrackTable.COLUMN_PIC, pics);

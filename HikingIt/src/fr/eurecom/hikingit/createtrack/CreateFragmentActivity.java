@@ -3,7 +3,6 @@ package fr.eurecom.hikingit.createtrack;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.id;
 import fr.eurecom.hikingit.R.layout;

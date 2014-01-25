@@ -3,11 +3,11 @@ package fr.eurecom.hikingit.edittrack;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import fr.eurecom.hikingit.OnFragmentClickListener;
 import fr.eurecom.hikingit.R;
 import fr.eurecom.hikingit.R.id;
 import fr.eurecom.hikingit.R.layout;
 import fr.eurecom.hikingit.contentprovider.TrackContentProvider;
+import fr.eurecom.hikingit.createtrack.OnFragmentClickListener;
 import fr.eurecom.hikingit.database.TrackTable;
 import android.app.ActionBar;
 import android.app.AlertDialog;
